@@ -1,0 +1,4 @@
+include ':app', ':hazeremoverlibrary', ':MatrixOperation'
+include ':openCVLibrary343'
+include ':dehazing'
+include ':app:dehaze'

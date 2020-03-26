@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".option">
+
+<it.chengdazhi.styleimageview.StyleImageView
+    android:id="@+id/imageView2"
+    android:layout_width="238dp"
+    android:layout_height="146dp"
+    android:layout_marginLeft="62dp"
+    android:layout_marginTop="40dp"
+    android:background="@drawable/gambarshow"
+    android:padding="25dp"/>
+
+    <Button
+        android:id="@+id/dehaze_button"
+        android:text="Dehaze"
+        android:textSize="10sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="238dp"
+        android:layout_marginLeft="-270dp"
+        />
+
+    <SeekBar
+        android:id="@+id/seekbar_dehaze"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="248dp"
+        android:max="250"
+        android:min="-250"
+        android:progress="0"
+
+        />
+    <TextView
+        android:text="Value"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="238dp"
+        android:layout_marginLeft="10dp"
+        />
+
+    <TextView
+    android:text="Brightness"
+    android:textSize="21sp"
+    android:layout_width="110dp"
+    android:layout_height="40dp"
+    android:layout_marginTop="280dp"
+    android:layout_marginLeft="-340dp"
+    />
+<SeekBar
+    android:id="@+id/seekbar_brightness"
+    android:layout_width="110dp"
+    android:layout_height="40dp"
+    android:max="500"
+    android:progress="300"
+    android:layout_marginTop="288dp"
+    />
+    <EditText
+        android:id="@+id/valueTxt1"
+        android:hint="Value"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="289dp"
+        android:layout_marginLeft="10dp"
+        android:inputType="numberSigned"
+        />
+
+
+    <TextView
+        android:text="Contrast"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="322dp"
+        android:layout_marginLeft="-340dp"
+        />
+    <SeekBar
+        android:id="@+id/seekbar_contrast"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:max="500"
+        android:progress="300"
+        android:layout_marginTop="331dp"
+        />
+    <EditText
+        android:id="@+id/valueTxt2"
+        android:hint="Value"
+        android:inputType="numberSigned"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="332dp"
+        android:layout_marginLeft="10dp"
+        />
+
+    <TextView
+        android:text="Saturation"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="363dp"
+        android:layout_marginLeft="-342dp"
+        />
+    <SeekBar
+        android:id="@+id/seekbar_saturation"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:max="500"
+        android:progress="250"
+        android:layout_marginTop="372dp"
+        android:layout_marginLeft="2dp"
+        tools:targetApi="o" />
+    <EditText
+        android:id="@+id/valueTxt3"
+        android:hint="Value"
+        android:inputType="numberSigned"
+        android:textSize="21sp"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="375dp"
+        android:layout_marginLeft="9dp"
+        />
+
+
+    <Button
+        android:id="@+id/save_filter"
+        android:text="Save Filter"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="-337dp"
+        android:background="@drawable/savefilter"/>
+    <Button
+        android:id="@+id/save_photo"
+        android:text="Save Photo"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="450dp"
+        android:background="@drawable/savephoto"/>
+
+
+</LinearLayout>
