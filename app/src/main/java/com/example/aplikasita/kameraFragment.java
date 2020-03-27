@@ -255,12 +255,14 @@ public class kameraFragment extends Fragment {
             Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
             Utils.bitmapToMat(bmp32, mat);
 
-            Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-            for (int a=0 ; a<mat.rows();a++){
-                for (int b=0 ; b<mat.cols();b++){
-                    Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
-                }
-            }
+
+            // FIXME Diwang komenin get matrix ini supaya gampang load
+//            Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
+//            for (int a=0 ; a<mat.rows();a++){
+//                for (int b=0 ; b<mat.cols();b++){
+//                    Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
+//                }
+//            }
         }
 
 

@@ -1,4 +1,4 @@
-package com.example.aplikasita;
+package com.example.aplikasita.dehaze;
 
 import android.graphics.Bitmap;
 import com.example.dehaze.DehazeResult;

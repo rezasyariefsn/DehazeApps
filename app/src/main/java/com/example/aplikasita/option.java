@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -30,40 +29,49 @@ import java.util.Arrays;
 import java.util.Random;
 
 import it.chengdazhi.styleimageview.StyleImageView;
+
+import com.example.aplikasita.dehaze.ImageDehazeResult;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
-import com.example.aplikasita.lib.Constant;
-import com.example.aplikasita.lib.Toaster;
-import com.example.aplikasita.lib.UriToUrl;
 
 public class option extends AppCompatActivity {
 
-    StyleImageView imageView;
-    SeekBar seekBarBright, seekBarContrast, seekBarSaturation;
-    Uri imageUri;
-    EditText valueTxt1, valueTxt2, valueTxt3;
+    private StyleImageView imageView;
 
+    // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
+    private Bitmap originalBitmap;
+    private BitmapDrawable originalBitmapDrawable;
+
+    private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
+    private Uri imageUri;
+    private EditText brightnessTxt, contrastTxt, saturationTxt;
 
     private Button savePhoto, saveFilter, dehazeButton;
     OutputStream outputStream;
-    private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
-//    private ImageDehazeResult downScaleDehazeResult;
-    private ImageDehazeResult originalDehazeResult;
     private Random random = new Random();
     private int sourceId;
+
+    private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
+    private ImageDehazeResult downScaleDehazeResult;
+    private ImageDehazeResult originalDehazeResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
 
+
         imageView = findViewById(R.id.imageView2);
+
+        seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
-        valueTxt1 = findViewById(R.id.valueTxt1);
-        valueTxt2 = findViewById(R.id.valueTxt2);
-        valueTxt3 = findViewById(R.id.valueTxt3);
+
+        brightnessTxt = findViewById(R.id.valueTxt1);
+        contrastTxt = findViewById(R.id.valueTxt2);
+        saturationTxt = findViewById(R.id.valueTxt3);
+
         savePhoto = findViewById(R.id.save_photo);
         saveFilter = findViewById(R.id.save_filter);
         dehazeButton = findViewById(R.id.dehaze_button);
@@ -76,24 +84,24 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = drawable.getBitmap();
 
                 File filepath = Environment.getExternalStorageDirectory();
-                File Dir = new File(filepath.getAbsolutePath()+"/Demo/");
+                File Dir = new File(filepath.getAbsolutePath() + "/Demo/");
                 Dir.mkdir();
-                File file = new File(Dir, System.currentTimeMillis()+".jpg");
+                File file = new File(Dir, System.currentTimeMillis() + ".jpg");
                 try {
                     outputStream = new FileOutputStream(file);
-                } catch (FileNotFoundException e){
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 Toast.makeText(getApplicationContext(), "Image Save Into Gallery", Toast.LENGTH_SHORT).show();
                 try {
                     outputStream.flush();
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 try {
                     outputStream.close();
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -113,7 +121,16 @@ public class option extends AppCompatActivity {
         dehazeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // FIXME Diwang nambahin action waktu dehaze
 
+                // ngambil bitmap dari picture yang ditampilin
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+                originalBitmap = bitmap;
+
+                // nge dehaze, terus tampilin imageview dehazed yang baru
+                ImageDehazeResult resultDehazed = removeHazeOnBitmap(bitmap, 100);
+                imageView.setImageBitmap(resultDehazed.getResult());
             }
         });
 
@@ -121,12 +138,16 @@ public class option extends AppCompatActivity {
         class ResultOfProcessing {
             private ImageDehazeResult originalResult;
 
-            public ResultOfProcessing(ImageDehazeResult originalResult){
+            public ResultOfProcessing(ImageDehazeResult originalResult) {
                 this.setOriginalResult(originalResult);
 
             }
-            public ImageDehazeResult getOriginalResult(){ return originalResult; }
-            public void setOriginalResult(ImageDehazeResult originalResult){
+
+            public ImageDehazeResult getOriginalResult() {
+                return originalResult;
+            }
+
+            public void setOriginalResult(ImageDehazeResult originalResult) {
                 this.originalResult = originalResult;
             }
 
@@ -137,7 +158,7 @@ public class option extends AppCompatActivity {
 //        }
 
         // Membuat Value Text 1 -3
-        valueTxt1.addTextChangedListener(new TextWatcher() {
+        brightnessTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -150,7 +171,7 @@ public class option extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255){
+                if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
                     imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
                     BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -159,7 +180,7 @@ public class option extends AppCompatActivity {
             }
         });
 
-        valueTxt2.addTextChangedListener(new TextWatcher() {
+        contrastTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -172,7 +193,7 @@ public class option extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255){
+                if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
                     imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
                     BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -181,7 +202,7 @@ public class option extends AppCompatActivity {
             }
         });
 
-        valueTxt3.addTextChangedListener(new TextWatcher() {
+        saturationTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -194,7 +215,7 @@ public class option extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255){
+                if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
                     imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
                     BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -206,20 +227,54 @@ public class option extends AppCompatActivity {
         // Menampilkan Imageview2 dari ImageView1
         Intent intent = getIntent();
         Bitmap bitmap = intent.getParcelableExtra("image");
-        if(bitmap!=null){
+        if (bitmap != null) {
 
             imageView.setImageBitmap(bitmap);
         }
 
+        //FIXME Diwang nambahin seekbarDehaze
+        seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // dimasukkan ke dalam Thread UI supaya bisa multithreading
+                        // ngambil bitmap dari picture yang ditampilin
+
+                        // nge dehaze, terus tampilin imageview dehazed yang baru
+                        ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
+                        imageView.setImageBitmap(resultDehazed.getResult());
+                    }
+                });
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         // Menampilkan Brightness, Contrast, Saturation dan edit value text
         seekBarBright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBarBright, int i, boolean fromUser) {
-                imageView.setBrightness(i - 255).updateStyle();
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
-                Bitmap bitmap = bitmapDrawable.getBitmap();
-                getMatrik(bitmap);
-                valueTxt1.setText(String.valueOf(i-250));
+            public void onProgressChanged(SeekBar seekBarBright, final int i, boolean fromUser) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setBrightness(i - 255).updateStyle();
+                        BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                        Bitmap bitmap = bitmapDrawable.getBitmap();
+                        getMatrik(bitmap);
+                        brightnessTxt.setText(String.valueOf(i - 250));
+                    }
+                });
+
             }
 
             @Override
@@ -240,7 +295,7 @@ public class option extends AppCompatActivity {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
-                valueTxt2.setText(String.valueOf(i-250));
+                contrastTxt.setText(String.valueOf(i - 250));
             }
 
             @Override
@@ -261,7 +316,7 @@ public class option extends AppCompatActivity {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
-                valueTxt3.setText(String.valueOf(i-250));
+                saturationTxt.setText(String.valueOf(i - 250));
             }
 
             @Override
@@ -274,7 +329,6 @@ public class option extends AppCompatActivity {
 
             }
         });
-
 
 
 //        if (getIntent().getExtras() !=null){
@@ -290,16 +344,46 @@ public class option extends AppCompatActivity {
     }
 
     // Menampilkan Matrix Ketika gambar udanh di enhancement ( Contrast, Saturation, Brightness )
-    private void getMatrik(Bitmap imageBitmap){
+    private void getMatrik(Bitmap imageBitmap) {
         Mat mat = new Mat();
         Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
 
         Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-        for (int a=0 ; a<mat.rows();a++){
-            for (int b=0 ; b<mat.cols();b++){
-                Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
-            }
-        }
+
+        // FIXME Diwang komen dibawah ini semua
+//        for (int a=0 ; a<mat.rows();a++){
+//            for (int b=0 ; b<mat.cols();b++){
+//                Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
+//            }
+//        }
+    }
+
+    // FIXME Diwang nambahin method dehaze untuk ngubah bitmap jadi dehazed
+    private ImageDehazeResult removeHazeOnBitmap(Bitmap src, int value) {
+
+        // ngambil pixel untuk parameter library si hazeremover
+        int[] pixels = new int[src.getWidth() * src.getHeight()];
+        src.getPixels(pixels, 0, src.getWidth(), 0, 0, src.getWidth(), src.getHeight());
+
+        // convert integer dari seekbar ke float untuk parameter library si hazeremover
+        float threshold = getThreshold(value);
+
+        // return bitmap hasil dehaze pake lib nya..
+        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+    }
+
+    // FIXME Diwang nambahin method ngubah int Seekbar jadi float
+    private float getThreshold(int valueSeekbar) {
+        float thresHold;
+        // integer si seekbar itu 0 - 100, mesti di convert ke float yang grafiknya exponential (liat di paper)
+        // 0 -> berarti nilai result besar, gambar semakin berkabut
+        // 100 -> berarti nilai result kecil bgt, gambar semakin jelas
+        float percent = (float) (valueSeekbar / 100);
+        float decay = 1 - percent;
+
+        thresHold = (float) Math.pow(decay, 1000);
+
+        return thresHold;
     }
 }

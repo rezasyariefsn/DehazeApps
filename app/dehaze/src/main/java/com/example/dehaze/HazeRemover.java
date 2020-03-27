@@ -3,7 +3,7 @@ package com.example.dehaze;
 import static com.example.dehaze.ColorUtils.*;
 
 public class HazeRemover {
-    private static final float TRANSMISSION_THRESHOLD = 0.2f;
+    private static final float TRANSMISSION_THRESHOLD = 2.5f;
     private static final int MAX_ATMOSPHERE = 220;
     private static final int DARK_CHANNEL_WINDOW_RADIUS = 7;
     private static final float OMEGA = 0.95f;
@@ -126,6 +126,28 @@ public class HazeRemover {
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
                 fBuffer1[y][x] = Math.max(fBuffer1[y][x], TRANSMISSION_THRESHOLD); // todo threshold transmission remove?
+        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
+        calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
+        return new DehazeResult(
+                height,
+                width,
+                pixels,
+                toHeatmap(refinedTransmission, height, width)
+        );
+    }
+
+    // FIXME Diwang nambahin custom dehaze method, supaya bisa diatur2 pakai seekbar. parameter: threshold
+    public DehazeResult dehaze(int[] pixels, int height, int width, float threshold) {
+        for (int y = 0; y < height; ++y)
+            for (int x = 0; x < width; ++x)
+                fBuffer1[y][x] = minChannel(pixels[y * width + x]);
+        calcDarkChannel(fBuffer1, fBuffer2, height, width);
+        int atmosphere = getAtmosphere(pixels, height, width, fBuffer1);
+        // todo bound atmosphere
+        getTransmission(pixels, fBuffer1, fBuffer2, height, width, atmosphere);
+        for (int y = 0; y < height; ++y)
+            for (int x = 0; x < width; ++x)
+                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
         float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
         calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
         return new DehazeResult(
