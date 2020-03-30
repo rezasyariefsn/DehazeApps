@@ -159,7 +159,6 @@ public class HazeRemover {
     }
 
     private static class FloatMinQueue {
-        // http://e-maxx.ru/algo/stacks_for_minima
 
         private final float[] queue;
         private int head, tail;

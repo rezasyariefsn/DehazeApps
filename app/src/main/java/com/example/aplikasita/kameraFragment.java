@@ -232,7 +232,7 @@ public class kameraFragment extends Fragment {
                     imageUri = data.getData();
                     try {
                        imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
-                       imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int)(imageBitmap.getWidth()*0.1), (int)(imageBitmap.getHeight()*0.1), true);
+                       imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int)(imageBitmap.getWidth()*0.4), (int)(imageBitmap.getHeight()*0.4), true);
                     }catch (IOException e){
                         e.printStackTrace();
                     }
@@ -255,7 +255,6 @@ public class kameraFragment extends Fragment {
             Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
             Utils.bitmapToMat(bmp32, mat);
 
-
             // FIXME Diwang komenin get matrix ini supaya gampang load
 //            Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
 //            for (int a=0 ; a<mat.rows();a++){
@@ -266,7 +265,7 @@ public class kameraFragment extends Fragment {
         }
 
 
-// Perhitungan Histogram
+     // Perhitungan Histogram
 
     public void histogram(Bitmap imageBitmap) {
         if (imageBitmap != null) {
