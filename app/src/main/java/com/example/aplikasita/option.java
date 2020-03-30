@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,12 +45,12 @@ public class option extends AppCompatActivity {
 
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
     private Uri imageUri;
-    private EditText brightnessTxt, contrastTxt, saturationTxt;
+    private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
 
-    private Button savePhoto, saveFilter, dehazeButton;
+    private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
     OutputStream outputStream;
-    private Random random = new Random();
-    private int sourceId;
+//    private Random random = new Random();
+//    private int sourceId;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
     private ImageDehazeResult downScaleDehazeResult;
@@ -60,8 +61,14 @@ public class option extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
 
-
+        // Menampilkan Imageview2 dari ImageView1
+        Intent intent = getIntent();
+        final Bitmap bitmap = intent.getParcelableExtra("image");
         imageView = findViewById(R.id.imageView2);
+        if (bitmap != null) {
+            originalBitmap = bitmap;
+            imageView.setImageBitmap(bitmap);
+        }
 
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
@@ -71,12 +78,17 @@ public class option extends AppCompatActivity {
         brightnessTxt = findViewById(R.id.valueTxt1);
         contrastTxt = findViewById(R.id.valueTxt2);
         saturationTxt = findViewById(R.id.valueTxt3);
+        dehazeTxt = findViewById(R.id.valueTxt4);
+
 
         savePhoto = findViewById(R.id.save_photo);
         saveFilter = findViewById(R.id.save_filter);
         dehazeButton = findViewById(R.id.dehaze_button);
+        depthMap = findViewById(R.id.depthMap);
+        histeqBtn = findViewById(R.id.histeqButton);
+//        histeq2Btn = findViewById(R.id.histeq2Button);
 
-        // Butat save Foto
+        // Buat save Foto
         savePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,32 +138,83 @@ public class option extends AppCompatActivity {
                 // ngambil bitmap dari picture yang ditampilin
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
-                originalBitmap = bitmap;
+
 
                 // nge dehaze, terus tampilin imageview dehazed yang baru
-                ImageDehazeResult resultDehazed = removeHazeOnBitmap(bitmap, 100);
+                ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
                 imageView.setImageBitmap(resultDehazed.getResult());
             }
         });
 
+        //Button depthMap ( Untuk melihat mana kabut mana engga )
+        depthMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+
+                // nampilin depth map
+                ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
+                imageView.setImageBitmap(resultDehazed.getDepth());
+            }
+        });
+
+        // Histogram Equalization Button
+        histeqBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Mat sourceMat = new Mat();
+                Utils.bitmapToMat(bitmap, sourceMat);
+                Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
+                Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_RGB2GRAY);
+//                Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
+                Imgproc.equalizeHist(sourceMat, destinationMat);
+
+                Bitmap equalizerBitmap = Bitmap.createBitmap(sourceMat.cols(), sourceMat.rows(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(destinationMat, equalizerBitmap);
+
+                imageView.setImageBitmap(equalizerBitmap);
+
+            }
+        });
+
+//        //Histeq 2 Button
+//        histeq2Btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Mat sourceMat = new Mat();
+//                Utils.bitmapToMat(bitmap, sourceMat);
+//                Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
+//                Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
+//                Imgproc.equalizeHist(sourceMat, destinationMat);
+//
+//                Bitmap equalizerBitmap = Bitmap.createBitmap(sourceMat.cols(), sourceMat.rows(), Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(destinationMat, equalizerBitmap);
+//
+//                imageView.setImageBitmap(equalizerBitmap);
+//            }
+//        });
+
+
         // Result Processing
-        class ResultOfProcessing {
-            private ImageDehazeResult originalResult;
-
-            public ResultOfProcessing(ImageDehazeResult originalResult) {
-                this.setOriginalResult(originalResult);
-
-            }
-
-            public ImageDehazeResult getOriginalResult() {
-                return originalResult;
-            }
-
-            public void setOriginalResult(ImageDehazeResult originalResult) {
-                this.originalResult = originalResult;
-            }
-
-        }
+//        class ResultOfProcessing {
+//            private ImageDehazeResult originalResult;
+//
+//            public ResultOfProcessing(ImageDehazeResult originalResult) {
+//                this.setOriginalResult(originalResult);
+//
+//            }
+//
+//            public ImageDehazeResult getOriginalResult() {
+//                return originalResult;
+//            }
+//
+//            public void setOriginalResult(ImageDehazeResult originalResult) {
+//                this.originalResult = originalResult;
+//            }
+//
+//        }
 
 //        private ImageDehazeResult dehaze(Bitmap) {
 //
@@ -224,14 +287,25 @@ public class option extends AppCompatActivity {
             }
         });
 
-        // Menampilkan Imageview2 dari ImageView1
-        Intent intent = getIntent();
-        Bitmap bitmap = intent.getParcelableExtra("image");
-        if (bitmap != null) {
+        dehazeTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            imageView.setImageBitmap(bitmap);
-        }
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        // Menampilkan Brightness, Contrast, Saturation, dehaze dan edit value text
         //FIXME Diwang nambahin seekbarDehaze
         seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -260,7 +334,6 @@ public class option extends AppCompatActivity {
             }
         });
 
-        // Menampilkan Brightness, Contrast, Saturation dan edit value text
         seekBarBright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBarBright, final int i, boolean fromUser) {
@@ -272,6 +345,7 @@ public class option extends AppCompatActivity {
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         getMatrik(bitmap);
                         brightnessTxt.setText(String.valueOf(i - 250));
+//                        imageView.setImageBitmap(bitmap);
                     }
                 });
 
@@ -296,6 +370,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 contrastTxt.setText(String.valueOf(i - 250));
+//                imageView.setImageBitmap(bitmap);
             }
 
             @Override
@@ -317,6 +392,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 saturationTxt.setText(String.valueOf(i - 250));
+//                imageView.setImageBitmap(bitmap);
             }
 
             @Override
