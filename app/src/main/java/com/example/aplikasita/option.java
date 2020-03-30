@@ -31,16 +31,20 @@ import java.util.Random;
 import it.chengdazhi.styleimageview.StyleImageView;
 
 import com.example.aplikasita.dehaze.ImageDehazeResult;
+import com.example.aplikasita.storage.FilterStorage;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
 
 public class option extends AppCompatActivity {
 
     private StyleImageView imageView;
+    private StyleImageView oriImageView;
+
 
     // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
     private Bitmap originalBitmap;
     private BitmapDrawable originalBitmapDrawable;
+    private FilterStorage newFilter;
 
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
     private Uri imageUri;
@@ -60,8 +64,13 @@ public class option extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
 
+        newFilter = new FilterStorage();
 
+        // main image (ditampilin)
         imageView = findViewById(R.id.imageView2);
+
+        // get bitmap
+        oriImageView = findViewById(R.id.imageView2);
 
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
@@ -113,6 +122,10 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), filter.class);
+                Bundle isiFilter = new Bundle();
+                intent.putExtra("dehazeLevel",newFilter.getDehazeLevel());
+                intent.putExtra("brightLevel",newFilter.getBrightLevel());
+                intent.putExtra("contrastLevel", newFilter.getContrastLevel());
                 startActivity(intent);
             }
         });
@@ -124,7 +137,7 @@ public class option extends AppCompatActivity {
                 // FIXME Diwang nambahin action waktu dehaze
 
                 // ngambil bitmap dari picture yang ditampilin
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) oriImageView.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 originalBitmap = bitmap;
 
@@ -245,6 +258,9 @@ public class option extends AppCompatActivity {
                         // nge dehaze, terus tampilin imageview dehazed yang baru
                         ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
                         imageView.setImageBitmap(resultDehazed.getResult());
+
+                        // simpen nilai dari progress
+                        newFilter.setDehazeLevel(progress);
                     }
                 });
             }
@@ -272,6 +288,7 @@ public class option extends AppCompatActivity {
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         getMatrik(bitmap);
                         brightnessTxt.setText(String.valueOf(i - 250));
+                        newFilter.setBrightLevel(i);
                     }
                 });
 
