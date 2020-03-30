@@ -39,8 +39,8 @@ import com.example.dehaze.HazeRemover;
 public class option extends AppCompatActivity {
 
     private StyleImageView imageView;
-    private StyleImageView oriImageView;
-
+    private StyleImageView imageViewProcess1;
+    private StyleImageView imageViewProcess2;
 
     // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
     private Bitmap originalBitmap;
@@ -71,14 +71,17 @@ public class option extends AppCompatActivity {
         // Menampilkan Imageview2 dari ImageView1
         Intent intent = getIntent();
         final Bitmap bitmap = intent.getParcelableExtra("image");
+
         imageView = findViewById(R.id.imageView2);
+        imageViewProcess1 = findViewById(R.id.imageView2);
+        imageViewProcess2 = findViewById(R.id.imageView2);
+
         if (bitmap != null) {
             originalBitmap = bitmap;
             imageView.setImageBitmap(bitmap);
         }
 
         // get bitmap
-        oriImageView = findViewById(R.id.imageView2);
 
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
@@ -155,8 +158,10 @@ public class option extends AppCompatActivity {
 
 
                 // nge dehaze, terus tampilin imageview dehazed yang baru
-                ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
-                imageView.setImageBitmap(resultDehazed.getResult());
+                ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
+                imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
+                imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
+                imageView.setImageBitmap(resultDehazed[2].getResult());
             }
         });
 
@@ -168,8 +173,10 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
 
                 // nampilin depth map
-                ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
-                imageView.setImageBitmap(resultDehazed.getDepth());
+                ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
+                imageViewProcess1.setImageBitmap(resultDehazed[0].getDepth());
+                imageViewProcess2.setImageBitmap(resultDehazed[1].getDepth());
+                imageView.setImageBitmap(resultDehazed[2].getDepth());
             }
         });
 
@@ -331,8 +338,11 @@ public class option extends AppCompatActivity {
                         // ngambil bitmap dari picture yang ditampilin
 
                         // nge dehaze, terus tampilin imageview dehazed yang baru
-                        ImageDehazeResult resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
-                        imageView.setImageBitmap(resultDehazed.getResult());
+
+                        ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
+                        imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
+                        imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
+                        imageView.setImageBitmap(resultDehazed[2].getResult());
 
                         // simpen nilai dari progress
                         newFilter.setDehazeLevel(progress);
@@ -453,7 +463,10 @@ public class option extends AppCompatActivity {
     }
 
     // FIXME Diwang nambahin method dehaze untuk ngubah bitmap jadi dehazed
-    private ImageDehazeResult removeHazeOnBitmap(Bitmap src, int value) {
+    private ImageDehazeResult[] removeHazeOnBitmap(Bitmap src, int value) {
+
+        // Objek yang berisi 3 buah hasil tiap proses
+        ImageDehazeResult[] results = new  ImageDehazeResult[3];
 
         // ngambil pixel untuk parameter library si hazeremover
         int[] pixels = new int[src.getWidth() * src.getHeight()];
@@ -463,7 +476,13 @@ public class option extends AppCompatActivity {
         float threshold = getThreshold(value);
 
         // return bitmap hasil dehaze pake lib nya..
-        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+        results[0] = new ImageDehazeResult(hazeRemover.dehazeProcess1(pixels, src.getHeight(), src.getWidth(), threshold));
+        results[1] = new ImageDehazeResult(hazeRemover.dehazeProcess2(pixels, src.getHeight(), src.getWidth(), threshold));
+        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+
+
+//        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+        return results;
     }
 
     // FIXME Diwang nambahin method ngubah int Seekbar jadi float
