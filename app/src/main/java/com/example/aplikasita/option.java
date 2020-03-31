@@ -73,8 +73,8 @@ public class option extends AppCompatActivity {
         final Bitmap bitmap = intent.getParcelableExtra("image");
 
         imageView = findViewById(R.id.imageView2);
-        imageViewProcess1 = findViewById(R.id.imageView2);
-        imageViewProcess2 = findViewById(R.id.imageView2);
+        imageViewProcess1 = findViewById(R.id.imageView3);
+        imageViewProcess2 = findViewById(R.id.imageView4);
 
         if (bitmap != null) {
             originalBitmap = bitmap;
@@ -157,7 +157,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
 
 
-                // nge dehaze, terus tampilin imageview dehazed yang baru
+                // process tiap gambar - dehaze gimana
                 ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
                 imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
                 imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
