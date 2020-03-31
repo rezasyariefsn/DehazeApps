@@ -184,7 +184,6 @@ public class option extends AppCompatActivity {
         histeqBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Mat sourceMat = new Mat();
                 Utils.bitmapToMat(bitmap, sourceMat);
                 Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
@@ -338,7 +337,6 @@ public class option extends AppCompatActivity {
                         // ngambil bitmap dari picture yang ditampilin
 
                         // nge dehaze, terus tampilin imageview dehazed yang baru
-
                         ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
                         imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
                         imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
@@ -397,7 +395,6 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 contrastTxt.setText(String.valueOf(i - 250));
-//                imageView.setImageBitmap(bitmap);
             }
 
             @Override
@@ -419,7 +416,6 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 saturationTxt.setText(String.valueOf(i - 250));
-//                imageView.setImageBitmap(bitmap);
             }
 
             @Override
@@ -432,18 +428,6 @@ public class option extends AppCompatActivity {
 
             }
         });
-
-
-//        if (getIntent().getExtras() !=null){
-//            imageUri = Uri.parse(getIntent().getStringExtra("imageUri"));
-//            imageView.setImageURI(imageUri);
-//        }
-
-//        else if (getIntent().getExtras() != null) {
-//            imageUri = Uri.parse(getIntent().getStringExtra("imageUri"));
-//            imageView.setImageURI(imageUri);
-//        }
-
     }
 
     // Menampilkan Matrix Ketika gambar udanh di enhancement ( Contrast, Saturation, Brightness )
