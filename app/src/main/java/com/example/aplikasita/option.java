@@ -57,8 +57,7 @@ public class option extends AppCompatActivity {
 //    private int sourceId;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
-    private ImageDehazeResult downScaleDehazeResult;
-    private ImageDehazeResult originalDehazeResult;
+    private int progressSeekbarDehaze;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +138,8 @@ public class option extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), filter.class);
                 Bundle isiFilter = new Bundle();
-                intent.putExtra("dehazeLevel",newFilter.getDehazeLevel());
-                intent.putExtra("brightLevel",newFilter.getBrightLevel());
+                intent.putExtra("dehazeLevel", newFilter.getDehazeLevel());
+                intent.putExtra("brightLevel", newFilter.getBrightLevel());
                 intent.putExtra("contrastLevel", newFilter.getContrastLevel());
                 intent.putExtra("saturationLevel", newFilter.getSatLevel());
                 startActivity(intent);
@@ -199,47 +198,6 @@ public class option extends AppCompatActivity {
 
             }
         });
-
-//        //Histeq 2 Button
-//        histeq2Btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Mat sourceMat = new Mat();
-//                Utils.bitmapToMat(bitmap, sourceMat);
-//                Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
-//                Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
-//                Imgproc.equalizeHist(sourceMat, destinationMat);
-//
-//                Bitmap equalizerBitmap = Bitmap.createBitmap(sourceMat.cols(), sourceMat.rows(), Bitmap.Config.ARGB_8888);
-//                Utils.matToBitmap(destinationMat, equalizerBitmap);
-//
-//                imageView.setImageBitmap(equalizerBitmap);
-//            }
-//        });
-
-
-        // Result Processing
-//        class ResultOfProcessing {
-//            private ImageDehazeResult originalResult;
-//
-//            public ResultOfProcessing(ImageDehazeResult originalResult) {
-//                this.setOriginalResult(originalResult);
-//
-//            }
-//
-//            public ImageDehazeResult getOriginalResult() {
-//                return originalResult;
-//            }
-//
-//            public void setOriginalResult(ImageDehazeResult originalResult) {
-//                this.originalResult = originalResult;
-//            }
-//
-//        }
-
-//        private ImageDehazeResult dehaze(Bitmap) {
-//
-//        }
 
         // Membuat Value Text 1 -3
         brightnessTxt.addTextChangedListener(new TextWatcher() {
@@ -328,6 +286,8 @@ public class option extends AppCompatActivity {
 
         // Menampilkan Brightness, Contrast, Saturation, dehaze dan edit value text
         //FIXME Diwang nambahin seekbarDehaze
+        seekbarDehaze.setProgress(progressSeekbarDehaze);
+
         seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
@@ -342,6 +302,8 @@ public class option extends AppCompatActivity {
                         imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
                         imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
                         imageView.setImageBitmap(resultDehazed[2].getResult());
+
+                        progressSeekbarDehaze = progress;
 
                         // simpen nilai dari progress
                         newFilter.setDehazeLevel(progress);
@@ -359,6 +321,9 @@ public class option extends AppCompatActivity {
 
             }
         });
+
+        // FIXME Diwang nambahin satu line ini buat ngeset progressbar 'sesuai' sama level brightnessnya
+        seekBarBright.setProgress(imageView.getBrightness() + 255);
 
         seekBarBright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -387,6 +352,9 @@ public class option extends AppCompatActivity {
 
             }
         });
+
+        // FIXME ini juga
+        seekBarContrast.setProgress((int) imageView.getContrast() * 100);
 
         seekBarContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -438,9 +406,9 @@ public class option extends AppCompatActivity {
         Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
         Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-        for (int a=0 ; a<(10);a++){
-            for (int b=0 ; b<(10);b++){
-                Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
+        for (int a = 0; a < (10); a++) {
+            for (int b = 0; b < (10); b++) {
+                Log.d("Matrik", "[" + a + "]" + "[" + b + "]" + Arrays.toString(mat.get(a, b)));
             }
         }
     }
@@ -449,7 +417,7 @@ public class option extends AppCompatActivity {
     private ImageDehazeResult[] removeHazeOnBitmap(Bitmap src, int value) {
 
         // Objek yang berisi 3 buah hasil tiap proses
-        ImageDehazeResult[] results = new  ImageDehazeResult[3];
+        ImageDehazeResult[] results = new ImageDehazeResult[3];
 
         // ngambil pixel untuk parameter library si hazeremover
         int[] pixels = new int[src.getWidth() * src.getHeight()];
@@ -479,7 +447,7 @@ public class option extends AppCompatActivity {
 
 //        thresHold = (float) Math.pow(decay, 1000);
 
-        thresHold = 2.5f ;
+        thresHold = 2.5f;
 
         return thresHold;
     }
