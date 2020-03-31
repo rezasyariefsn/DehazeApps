@@ -1,27 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".option">
 
-    <it.chengdazhi.styleimageview.StyleImageView
-        android:id="@+id/imageView2"
-        android:layout_width="238dp"
-        android:layout_height="146dp"
-        android:layout_marginLeft="62dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/gambarshow"
-        android:padding="25dp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="213dp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="213dp"
+        tools:ignore="ExtraText">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+<!--            <Button-->
+<!--                android:layout_width="238dp"-->
+<!--                android:layout_height="146dp"-->
+<!--                android:background="@drawable/aftercapture1"-->
+<!--                android:layout_marginTop="40dp"-->
+<!--                android:layout_marginLeft="100dp"/>-->
+
+            <it.chengdazhi.styleimageview.StyleImageView
+                android:id="@+id/imageView2"
+                android:layout_width="238dp"
+                android:layout_height="146dp"
+                android:layout_marginLeft="102dp"
+                android:layout_marginTop="40dp"
+
+                android:padding="25dp" />
+            <it.chengdazhi.styleimageview.StyleImageView
+                android:id="@+id/imageView3"
+                android:layout_width="238dp"
+                android:layout_height="146dp"
+                android:layout_marginTop="40dp"
+                />
+            <it.chengdazhi.styleimageview.StyleImageView
+                android:id="@+id/imageView4"
+                android:layout_width="238dp"
+                android:layout_height="146dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="4dp"
+                />
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+<!--    <Button-->
+<!--        android:layout_width="238dp"-->
+<!--        android:layout_height="146dp"-->
+<!--        android:background="@drawable/aftercapture1"-->
+<!--        android:layout_marginTop="40dp"-->
+<!--        android:layout_marginLeft="100dp"/>-->
 
     <Button
         android:id="@+id/depthMap"
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginTop="-100dp"
-        android:layout_marginLeft="-260dp"
+        android:layout_marginTop="220dp"
+        android:layout_marginLeft="20dp"
         android:padding="10dp"
         android:text="DepthMap"
         android:textSize="10sp" />
@@ -30,8 +75,8 @@
         android:id="@+id/dehaze_button"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="-111dp"
-        android:layout_marginTop="238dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="265dp"
         android:text="Dehaze"
         android:textSize="10sp" />
 
@@ -41,7 +86,8 @@
         android:id="@+id/seekbar_dehaze"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginTop="248dp"
+        android:layout_marginTop="265dp"
+        android:layout_marginLeft="135dp"
         android:max="100"
         android:min="0"
         android:progress="50"
@@ -52,8 +98,8 @@
         android:id="@+id/valueTxt4"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="248dp"
+        android:layout_marginLeft="254dp"
+        android:layout_marginTop="265dp"
         android:hint="Value"
         android:inputType="numberSigned"
         android:textSize="21sp" />
@@ -61,8 +107,8 @@
     <TextView
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="-340dp"
-        android:layout_marginTop="280dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="310dp"
         android:text="Brightness"
         android:textSize="21sp" />
 
@@ -70,7 +116,8 @@
         android:id="@+id/seekbar_brightness"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginTop="288dp"
+        android:layout_marginLeft="135dp"
+        android:layout_marginTop="310dp"
         android:max="500"
         android:progress="300" />
 
@@ -78,8 +125,8 @@
         android:id="@+id/valueTxt1"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="289dp"
+        android:layout_marginLeft="254dp"
+        android:layout_marginTop="310dp"
         android:hint="Value"
         android:inputType="numberSigned"
         android:textSize="21sp" />
@@ -88,8 +135,8 @@
     <TextView
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="-343dp"
-        android:layout_marginTop="320dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="350dp"
         android:text="Contrast"
         android:textSize="21sp" />
 
@@ -97,7 +144,8 @@
         android:id="@+id/seekbar_contrast"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginTop="331dp"
+        android:layout_marginLeft="135dp"
+        android:layout_marginTop="350dp"
         android:max="500"
         android:progress="300" />
 
@@ -105,8 +153,8 @@
         android:id="@+id/valueTxt2"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="332dp"
+        android:layout_marginLeft="254dp"
+        android:layout_marginTop="350dp"
         android:hint="Value"
         android:inputType="numberSigned"
         android:textSize="21sp" />
@@ -114,8 +162,8 @@
     <TextView
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="-341dp"
-        android:layout_marginTop="363dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="392dp"
         android:text="Saturation"
         android:textSize="21sp" />
 
@@ -123,8 +171,8 @@
         android:id="@+id/seekbar_saturation"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="372dp"
+        android:layout_marginLeft="135dp"
+        android:layout_marginTop="392dp"
         android:max="500"
         android:progress="250"
         tools:targetApi="o" />
@@ -133,8 +181,8 @@
         android:id="@+id/valueTxt3"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="9dp"
-        android:layout_marginTop="375dp"
+        android:layout_marginLeft="254dp"
+        android:layout_marginTop="392dp"
         android:hint="Value"
         android:inputType="numberSigned"
         android:textSize="21sp" />
@@ -154,8 +202,8 @@
         android:id="@+id/save_filter"
         android:layout_width="130dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="-120dp"
-        android:layout_marginTop="480dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="490dp"
         android:background="@drawable/savefilter"
         android:text="Save Filter" />
 
@@ -163,10 +211,10 @@
         android:id="@+id/save_photo"
         android:layout_width="130dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="480dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginTop="490dp"
         android:background="@drawable/savephoto"
         android:text="Save Photo" />
 
 
-</LinearLayout>
+</RelativeLayout>
