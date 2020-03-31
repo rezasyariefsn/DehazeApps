@@ -174,8 +174,8 @@ public class option extends AppCompatActivity {
 
                 // nampilin depth map
                 ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
-                imageViewProcess1.setImageBitmap(resultDehazed[0].getDepth());
-                imageViewProcess2.setImageBitmap(resultDehazed[1].getDepth());
+//                imageViewProcess1.setImageBitmap(resultDehazed[0].getDepth());
+//                imageViewProcess2.setImageBitmap(resultDehazed[1].getDepth());
                 imageView.setImageBitmap(resultDehazed[2].getDepth());
             }
         });
