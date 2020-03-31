@@ -1,9 +1,11 @@
 package com.example.dehaze;
 
+import android.graphics.Bitmap;
+
 import static com.example.dehaze.ColorUtils.*;
 
 public class HazeRemover {
-    private static final float TRANSMISSION_THRESHOLD = 2.5f;
+    private static final float TRANSMISSION_THRESHOLD = 0.2f;
     private static final int MAX_ATMOSPHERE = 220;
     private static final int DARK_CHANNEL_WINDOW_RADIUS = 7;
     private static final float OMEGA = 0.95f;
@@ -12,11 +14,15 @@ public class HazeRemover {
 
     private final float[][] fBuffer1;
     private final float[][] fBuffer2;
+    private final float[][] fBuffer3;
+    private final float[][] fBuffer4;
 
     public HazeRemover(GuidedFilter guidedFilter, int maxHeight, int maxWidth) {
         this.guidedFilter = guidedFilter;
         this.fBuffer1 = new float[maxHeight][maxWidth];
         this.fBuffer2 = new float[maxHeight][maxWidth];
+        this.fBuffer3 = new float[maxHeight][maxWidth];
+        this.fBuffer4 = new float[maxHeight][maxWidth];
     }
 
     private static void calcDarkChannel(float[][] srcDest, float[][] buffer, int height, int width) {
@@ -103,6 +109,7 @@ public class HazeRemover {
         }
     }
 
+    //Depth Map
     private int[] toHeatmap(float[][] depth, int height, int width) {
         int[] result = new int[height * width];
         for (int y = 0; y < height; ++y) {
@@ -147,7 +154,7 @@ public class HazeRemover {
         getTransmission(pixels, fBuffer1, fBuffer2, height, width, atmosphere);
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
-                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
+                fBuffer1[y][x] = Math.max(fBuffer1[y][x], TRANSMISSION_THRESHOLD); // todo threshold transmission remove?
         float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
         calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
         return new DehazeResult(
@@ -158,45 +165,50 @@ public class HazeRemover {
         );
     }
 
+//    public Bitmap getBuffer1 (){
+//        return Bitmap.createBitmap()
+//    }
+
+
     public DehazeResult dehazeProcess1(int[] pixels, int height, int width, float threshold) {
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
-                fBuffer1[y][x] = minChannel(pixels[y * width + x]);
-        calcDarkChannel(fBuffer1, fBuffer2, height, width);
+                fBuffer3[y][x] = minChannel(pixels[y * width + x]);
+        calcDarkChannel(fBuffer3, fBuffer2, height, width);
 //        int atmosphere = getAtmosphere(pixels, height, width, fBuffer1);
 //        // todo bound atmosphere
 //        getTransmission(pixels, fBuffer1, fBuffer2, height, width, atmosphere);
 //        for (int y = 0; y < height; ++y)
 //            for (int x = 0; x < width; ++x)
 //                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
-        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
+//        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
 //        calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
         return new DehazeResult(
                 height,
                 width,
                 pixels,
-                toHeatmap(refinedTransmission, height, width)
+                toHeatmap(fBuffer3, height, width)
         );
     }
 
     public DehazeResult dehazeProcess2(int[] pixels, int height, int width, float threshold) {
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
-                fBuffer1[y][x] = minChannel(pixels[y * width + x]);
-        calcDarkChannel(fBuffer1, fBuffer2, height, width);
-        int atmosphere = getAtmosphere(pixels, height, width, fBuffer1);
+                fBuffer4[y][x] = minChannel(pixels[y * width + x]);
+        calcDarkChannel(fBuffer4, fBuffer2, height, width);
+        int atmosphere = getAtmosphere(pixels, height, width, fBuffer4);
         // todo bound atmosphere
-        getTransmission(pixels, fBuffer1, fBuffer2, height, width, atmosphere);
+        getTransmission(pixels, fBuffer4, fBuffer2, height, width, atmosphere);
 //        for (int y = 0; y < height; ++y)
 //            for (int x = 0; x < width; ++x)
 //                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
 //        calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
-        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
+//        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
         return new DehazeResult(
                 height,
                 width,
                 pixels,
-                toHeatmap(refinedTransmission, height, width)
+                toHeatmap(fBuffer4, height, width)
         );
     }
 

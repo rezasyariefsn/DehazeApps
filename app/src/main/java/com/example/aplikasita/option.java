@@ -142,6 +142,7 @@ public class option extends AppCompatActivity {
                 intent.putExtra("dehazeLevel",newFilter.getDehazeLevel());
                 intent.putExtra("brightLevel",newFilter.getBrightLevel());
                 intent.putExtra("contrastLevel", newFilter.getContrastLevel());
+                intent.putExtra("saturationLevel", newFilter.getSatLevel());
                 startActivity(intent);
             }
         });
@@ -447,19 +448,17 @@ public class option extends AppCompatActivity {
     }
 
     // Menampilkan Matrix Ketika gambar udanh di enhancement ( Contrast, Saturation, Brightness )
+    // Dibuat 10 baris aja biar tidak nge lama load nya
     private void getMatrik(Bitmap imageBitmap) {
         Mat mat = new Mat();
         Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
-
         Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-
-        // FIXME Diwang komen dibawah ini semua
-//        for (int a=0 ; a<mat.rows();a++){
-//            for (int b=0 ; b<mat.cols();b++){
-//                Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
-//            }
-//        }
+        for (int a=0 ; a<(10);a++){
+            for (int b=0 ; b<(10);b++){
+                Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
+            }
+        }
     }
 
     // FIXME Diwang nambahin method dehaze untuk ngubah bitmap jadi dehazed
@@ -478,7 +477,7 @@ public class option extends AppCompatActivity {
         // return bitmap hasil dehaze pake lib nya..
         results[0] = new ImageDehazeResult(hazeRemover.dehazeProcess1(pixels, src.getHeight(), src.getWidth(), threshold));
         results[1] = new ImageDehazeResult(hazeRemover.dehazeProcess2(pixels, src.getHeight(), src.getWidth(), threshold));
-        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth()));
 
 
 //        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
@@ -494,7 +493,9 @@ public class option extends AppCompatActivity {
         float percent = (float) (valueSeekbar / 100);
         float decay = 1 - percent;
 
-        thresHold = (float) Math.pow(decay, 1000);
+//        thresHold = (float) Math.pow(decay, 1000);
+
+        thresHold = 2.5f ;
 
         return thresHold;
     }

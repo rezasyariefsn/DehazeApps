@@ -250,18 +250,17 @@ public class kameraFragment extends Fragment {
             }
         }
        // Menampilkan Matrix ketika Take Photo dan Open Gallery
+       // Dibuat 10 baris aja biar tidak nge lama load nya
         private void getMatrik(Bitmap imageBitmap){
             Mat mat = new Mat();
             Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
             Utils.bitmapToMat(bmp32, mat);
-
-            // FIXME Diwang komenin get matrix ini supaya gampang load
-//            Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-//            for (int a=0 ; a<mat.rows();a++){
-//                for (int b=0 ; b<mat.cols();b++){
-//                    Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
-//                }
-//            }
+            Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
+            for (int a=0 ; a<(10);a++){
+                for (int b=0 ; b<(10);b++){
+                    Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
+                }
+            }
         }
 
 
