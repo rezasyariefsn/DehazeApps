@@ -35,6 +35,7 @@
                 android:layout_marginTop="40dp"
 
                 android:padding="25dp" />
+
             <it.chengdazhi.styleimageview.StyleImageView
                 android:id="@+id/imageView3"
                 android:layout_width="238dp"
@@ -192,8 +193,8 @@
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="-340dp"
+        android:layout_marginTop="432dp"
+        android:layout_marginLeft="20dp"
         android:padding="10dp"
         android:text="Histeq"
         android:textSize="10sp" />
@@ -203,7 +204,7 @@
         android:layout_width="130dp"
         android:layout_height="40dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="490dp"
+        android:layout_marginTop="499dp"
         android:background="@drawable/savefilter"
         android:text="Save Filter" />
 
@@ -212,7 +213,7 @@
         android:layout_width="130dp"
         android:layout_height="40dp"
         android:layout_marginLeft="210dp"
-        android:layout_marginTop="490dp"
+        android:layout_marginTop="499dp"
         android:background="@drawable/savephoto"
         android:text="Save Photo" />
 

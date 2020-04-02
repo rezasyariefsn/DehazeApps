@@ -203,7 +203,7 @@ public class HazeRemover {
 //            for (int x = 0; x < width; ++x)
 //                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
 //        calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
-//        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
+        float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
         return new DehazeResult(
                 height,
                 width,
