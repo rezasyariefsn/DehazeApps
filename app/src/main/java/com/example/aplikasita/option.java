@@ -20,6 +20,14 @@ import android.widget.Toast;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.CvType;
+import static org.opencv.core.CvType.CV_32F;
+import org.opencv.core.Point;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.core.Core;
+import static org.opencv.core.Core.BORDER_CONSTANT;
+import static org.opencv.core.Core.BORDER_DEFAULT;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,6 +60,7 @@ public class option extends AppCompatActivity {
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
 
     private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
+    private Button PSNRbtn, MSEbtn;
     OutputStream outputStream;
 //    private Random random = new Random();
 //    private int sourceId;
@@ -98,6 +107,8 @@ public class option extends AppCompatActivity {
         dehazeButton = findViewById(R.id.dehaze_button);
         depthMap = findViewById(R.id.depthMap);
         histeqBtn = findViewById(R.id.histeqButton);
+        PSNRbtn = findViewById(R.id.psnrBtn);
+        MSEbtn = findViewById(R.id.mseBtn);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
 
         // Buat save Foto
