@@ -484,6 +484,11 @@ public class option extends AppCompatActivity {
             return new double[2];
         }
 
+        // cari paper keluaran hasil psnr harus 30db
+        // kenapa harus mse atau rmse (beda nya apa)
+        // rmse di akarin
+
+
         else
         {
             double mse  = sse / (double)(sourceMat.channels() * sourceMat.total());
