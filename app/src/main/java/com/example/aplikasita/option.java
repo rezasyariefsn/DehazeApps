@@ -146,6 +146,7 @@ public class option extends AppCompatActivity {
             }
         });
 
+
         // Button Result Dehaze
         dehazeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,13 +158,24 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
 
 
+
+                // Cari filter lain, cari parameter nya apa bandingkan dengan cara kualitatif ( masih nyoba on progress )
+                // Nilai kabutnya darimana (threshold) , cek dengan rumus nya kabut nya masih ada apa engga
+                // Cara validasi kabut nya dari metode nya gimana ( depth map )
+
+                // Validasi kabut ambil dari threshold transmission nya sama liat dari depth map
+
+                // tulis di buku TA algoritma nyaa
+
                 // process tiap gambar - dehaze gimana
                 ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
                 imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
                 imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
                 imageView.setImageBitmap(resultDehazed[2].getResult());
+                getMatrik(bitmap);
             }
         });
+
 
         //Button depthMap ( Untuk melihat mana kabut mana engga )
         depthMap.setOnClickListener(new View.OnClickListener() {
@@ -188,7 +200,7 @@ public class option extends AppCompatActivity {
                 Utils.bitmapToMat(bitmap, sourceMat);
                 Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
                 Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_RGB2GRAY);
-//                Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
+//              Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
                 Imgproc.equalizeHist(sourceMat, destinationMat);
 
                 Bitmap equalizerBitmap = Bitmap.createBitmap(sourceMat.cols(), sourceMat.rows(), Bitmap.Config.ARGB_8888);
@@ -280,6 +292,8 @@ public class option extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+
+
             }
         });
 
@@ -299,8 +313,6 @@ public class option extends AppCompatActivity {
 
                         // nge dehaze, terus tampilin imageview dehazed yang baru
                         ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
-                        imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
-                        imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
                         imageView.setImageBitmap(resultDehazed[2].getResult());
 
                         progressSeekbarDehaze = progress;
@@ -364,6 +376,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 contrastTxt.setText(String.valueOf(i - 250));
+                newFilter.setContrastLevel(i);
             }
 
             @Override
@@ -385,6 +398,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 saturationTxt.setText(String.valueOf(i - 250));
+                newFilter.setSatLevel(i);
             }
 
             @Override
@@ -406,8 +420,8 @@ public class option extends AppCompatActivity {
         Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
         Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-        for (int a = 0; a < (10); a++) {
-            for (int b = 0; b < (10); b++) {
+        for (int a = 0; a <(10); a++) {
+            for (int b = 0; b <(10); b++) {
                 Log.d("Matrik", "[" + a + "]" + "[" + b + "]" + Arrays.toString(mat.get(a, b)));
             }
         }
@@ -426,10 +440,17 @@ public class option extends AppCompatActivity {
         // convert integer dari seekbar ke float untuk parameter library si hazeremover
         float threshold = getThreshold(value);
 
+        // Nilai Variable untuk dehaze di seekbar gimana ??
+        // nilai tidak cuman satu
+        // nilai masuk kemana di programnya mana
+
+        // nilai hanya threshold nya saja untuk nge hapus dehaze nya
+
+
         // return bitmap hasil dehaze pake lib nya..
         results[0] = new ImageDehazeResult(hazeRemover.dehazeProcess1(pixels, src.getHeight(), src.getWidth(), threshold));
         results[1] = new ImageDehazeResult(hazeRemover.dehazeProcess2(pixels, src.getHeight(), src.getWidth(), threshold));
-        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth()));
+        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
 
 
 //        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
@@ -445,10 +466,10 @@ public class option extends AppCompatActivity {
         float percent = (float) (valueSeekbar / 100);
         float decay = 1 - percent;
 
-//        thresHold = (float) Math.pow(decay, 1000);
+        thresHold = (float) Math.pow(decay, 1000);
 
-        thresHold = 2.5f;
-
+//        thresHold = 0.2f;
+//
         return thresHold;
     }
 }

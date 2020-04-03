@@ -33,7 +33,6 @@
                 android:layout_height="146dp"
                 android:layout_marginLeft="102dp"
                 android:layout_marginTop="40dp"
-
                 android:padding="25dp" />
 
             <it.chengdazhi.styleimageview.StyleImageView

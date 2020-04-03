@@ -232,7 +232,7 @@ public class kameraFragment extends Fragment {
                     imageUri = data.getData();
                     try {
                        imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
-                       imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int)(imageBitmap.getWidth()*0.4), (int)(imageBitmap.getHeight()*0.4), true);
+                       imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int)(imageBitmap.getWidth()*0.07), (int)(imageBitmap.getHeight()*0.07), true);
                     }catch (IOException e){
                         e.printStackTrace();
                     }
@@ -257,7 +257,7 @@ public class kameraFragment extends Fragment {
             Utils.bitmapToMat(bmp32, mat);
             Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
             for (int a=0 ; a<(10);a++){
-                for (int b=0 ; b<(10);b++){
+                for (int b=0 ; b<(30);b++){
                     Log.d("Matrik", "["+a+"]"+"["+b+"]"+Arrays.toString(mat.get(a, b)));
                 }
             }
