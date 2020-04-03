@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,12 +16,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.features2d.MSER;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.CvType;
+
+import static org.opencv.core.Core.absdiff;
 import static org.opencv.core.CvType.CV_32F;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -58,6 +64,8 @@ public class option extends AppCompatActivity {
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
     private Uri imageUri;
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
+
+    private TextView MSEhsl, PSNRhsl;
 
     private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
     private Button PSNRbtn, MSEbtn;
@@ -101,6 +109,8 @@ public class option extends AppCompatActivity {
         saturationTxt = findViewById(R.id.valueTxt3);
         dehazeTxt = findViewById(R.id.valueTxt4);
 
+        MSEhsl = findViewById(R.id.mseHsl);
+        PSNRhsl = findViewById(R.id.psnrHsl);
 
         savePhoto = findViewById(R.id.save_photo);
         saveFilter = findViewById(R.id.save_filter);
@@ -110,6 +120,28 @@ public class option extends AppCompatActivity {
         PSNRbtn = findViewById(R.id.psnrBtn);
         MSEbtn = findViewById(R.id.mseBtn);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
+
+        PSNRbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String hasilpsnr = "";
+                double psnr = getMSE(originalBitmap, imageView.getBitmap())[1];
+                hasilpsnr = String.format("%.2f", psnr);
+                PSNRhsl.setText(hasilpsnr);
+
+            }
+        });
+
+        MSEbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String hasilmse = "";
+                double mse = getMSE(originalBitmap, imageView.getBitmap())[0];
+                hasilmse = String.format("%.2f", mse);
+                MSEhsl.setText(hasilmse);
+
+            }
+        });
 
         // Buat save Foto
         savePhoto.setOnClickListener(new View.OnClickListener() {
@@ -422,6 +454,49 @@ public class option extends AppCompatActivity {
 
             }
         });
+    }
+
+    public double[] getMSE(Bitmap source, Bitmap result)
+    {
+        double[]hasil = new double[2];
+        Mat resultMat = new Mat();
+        Mat sourceMat = new Mat();
+//        Log.e("hasill3", "mat" );
+        Bitmap sourceBitmap = source.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap resultBitmap = result.copy(Bitmap.Config.ARGB_8888, true);
+        Utils.bitmapToMat(sourceBitmap, sourceMat);
+        Utils.bitmapToMat(resultBitmap, resultMat);
+        Log.e("hasill4", "bitmap"+sourceMat);
+        Mat s1 = new Mat();
+        Core.absdiff(sourceMat, resultMat, s1);  // |I1 - I2|
+        Log.e("hasillCore", "hasilll2" +s1);
+        s1.convertTo(s1, CvType.CV_8U); // cannot make a square on 8 bits
+        s1 = s1.mul(s1); // |I1 - I2|^2
+        Log.e("yyoo", "hasilS1" +s1);
+
+        Scalar s = Core.sumElems(s1); // sum element per channel
+
+
+        double sse = s.val[0] + s.val[1] + s.val[2]; //sum channels
+        Log.e("hai", "hasilSSE" +sse);
+        if(sse <= 1e-30){ // for small values return zero
+            Log.e("error", "smallvalues" );
+            return new double[2];
+        }
+
+        else
+        {
+            double mse  = sse / (double)(sourceMat.channels() * sourceMat.total());
+            double psnr = 10.0 * Math.log10((255 * 255) / mse);
+            hasil[0] = mse;
+            hasil[1] = psnr;
+            Log.e("berhasil", "yeey");
+            return hasil;
+//            return new double[mse, psnr];
+
+            //
+
+        }
     }
 
     // Menampilkan Matrix Ketika gambar udanh di enhancement ( Contrast, Saturation, Brightness )

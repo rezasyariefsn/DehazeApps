@@ -218,6 +218,23 @@
         android:text="MSE"
         android:textSize="10sp"
         android:padding="10dp"/>
+    <TextView
+        android:id="@+id/psnrHsl"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="477dp"
+        android:text=""
+        android:textSize="21sp" />
+
+    <TextView
+        android:id="@+id/mseHsl"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="522dp"
+        android:text=""
+        android:textSize="21sp" />
 
     <Button
         android:id="@+id/save_filter"

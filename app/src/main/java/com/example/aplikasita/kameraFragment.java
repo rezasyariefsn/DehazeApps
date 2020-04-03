@@ -74,6 +74,7 @@ public class kameraFragment extends Fragment {
     private Button Gofilter;
     private boolean isImageHistogram = false;
     private Bitmap imageBitmap;
+
 //    private ImageView inputImg, inputImg1, outputImg, outputImg1, iv1, iv2, iv3, iv4;
 //    private Bitmap inputBmp, bmp1, bmp2;
 //    private Size mSize0;
