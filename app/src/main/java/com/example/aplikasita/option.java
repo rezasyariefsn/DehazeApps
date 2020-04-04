@@ -62,13 +62,16 @@ public class option extends AppCompatActivity {
     private FilterStorage newFilter;
 
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
+    private SeekBar seekbarDehaze2;
     private Uri imageUri;
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
+    private EditText dehaze2Txt;
 
     private TextView MSEhsl, PSNRhsl;
 
     private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
     private Button PSNRbtn, MSEbtn;
+    private Button dehaze2Button;
     OutputStream outputStream;
 //    private Random random = new Random();
 //    private int sourceId;
@@ -100,6 +103,7 @@ public class option extends AppCompatActivity {
         // get bitmap
 
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
+        seekbarDehaze2 = findViewById(R.id.seekbar_dehaze2);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
@@ -108,6 +112,7 @@ public class option extends AppCompatActivity {
         contrastTxt = findViewById(R.id.valueTxt2);
         saturationTxt = findViewById(R.id.valueTxt3);
         dehazeTxt = findViewById(R.id.valueTxt4);
+        dehaze2Txt = findViewById(R.id.valueTxt5);
 
         MSEhsl = findViewById(R.id.mseHsl);
         PSNRhsl = findViewById(R.id.psnrHsl);
@@ -115,6 +120,7 @@ public class option extends AppCompatActivity {
         savePhoto = findViewById(R.id.save_photo);
         saveFilter = findViewById(R.id.save_filter);
         dehazeButton = findViewById(R.id.dehaze_button);
+        dehaze2Button = findViewById(R.id.dehaze2_button);
         depthMap = findViewById(R.id.depthMap);
         histeqBtn = findViewById(R.id.histeqButton);
         PSNRbtn = findViewById(R.id.psnrBtn);
@@ -186,6 +192,14 @@ public class option extends AppCompatActivity {
                 intent.putExtra("contrastLevel", newFilter.getContrastLevel());
                 intent.putExtra("saturationLevel", newFilter.getSatLevel());
                 startActivity(intent);
+            }
+        });
+
+        // Button Result Dehaze 2
+        dehaze2Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -456,6 +470,8 @@ public class option extends AppCompatActivity {
         });
     }
 
+
+    // Get Value PSNR dan MSE
     public double[] getMSE(Bitmap source, Bitmap result)
     {
         double[]hasil = new double[2];
