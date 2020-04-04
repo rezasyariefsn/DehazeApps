@@ -7,6 +7,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
+// untuk menghubungkan ke server
 public class RetrofitBaseService {
     private static final String BASE_URL = "http://192.168.1.3:5000";
     private static Retrofit retrofit = null;

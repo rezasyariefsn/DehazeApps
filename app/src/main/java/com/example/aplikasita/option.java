@@ -485,6 +485,7 @@ public class option extends AppCompatActivity {
 
     // Untuk Upload gambar ke server
     private void uploadFile(Bitmap bitmap) {
+        // Nge buat filename dari bitmap
         String filename = "image.jpg";
         File f = new File(this.getCacheDir(), filename);
         try {
@@ -493,12 +494,12 @@ public class option extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //Convert bitmap to byte array
+        //Convert bitmap ke bentuk JPG
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
         byte[] bitmapdata = bos.toByteArray();
 
-        //write the bytes in file
+        //Bikin File dari bitmap untuk upload ke server
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
@@ -512,10 +513,10 @@ public class option extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+            // ngirim file yang udah di buat ke server
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), f);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", f.getName(), reqFile);
-
+            // ambil data dari server ketika sukses
         Call<UploadResponseData> call = RetrofitService.endPointService().uploadData(body);
         if (call != null) {
             call.enqueue(new Callback<UploadResponseData>() {
@@ -523,6 +524,7 @@ public class option extends AppCompatActivity {
                 public void onResponse(Call<UploadResponseData> call, Response<UploadResponseData> response) {
                     if (response.isSuccessful()) {
                         String file_url = response.body().getFileUrl();
+                        // taro di glide untuk ambil data nya
                         Glide.with(option.this).asBitmap().load(file_url).into(imageView);
                     }
                 }
