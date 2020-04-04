@@ -102,17 +102,17 @@
         android:progress="50"
 
         />
-    <SeekBar
-        android:id="@+id/seekbar_dehaze2"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="223dp"
-        android:layout_marginLeft="135dp"
-        android:max="100"
-        android:min="0"
-        android:progress="50"
+<!--    <SeekBar-->
+<!--        android:id="@+id/seekbar_dehaze2"-->
+<!--        android:layout_width="110dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginTop="223dp"-->
+<!--        android:layout_marginLeft="135dp"-->
+<!--        android:max="100"-->
+<!--        android:min="0"-->
+<!--        android:progress="50"-->
 
-        />
+<!--        />-->
 
     <EditText
         android:id="@+id/valueTxt4"
@@ -124,15 +124,15 @@
         android:inputType="numberSigned"
         android:textSize="21sp" />
 
-    <EditText
-        android:id="@+id/valueTxt5"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="254dp"
-        android:layout_marginTop="223dp"
-        android:hint="Value"
-        android:inputType="numberSigned"
-        android:textSize="21sp" />
+<!--    <EditText-->
+<!--        android:id="@+id/valueTxt5"-->
+<!--        android:layout_width="110dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginLeft="254dp"-->
+<!--        android:layout_marginTop="223dp"-->
+<!--        android:hint="Value"-->
+<!--        android:inputType="numberSigned"-->
+<!--        android:textSize="21sp" />-->
 
     <TextView
         android:layout_width="110dp"

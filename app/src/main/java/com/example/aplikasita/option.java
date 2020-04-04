@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -35,17 +36,29 @@ import org.opencv.core.Core;
 import static org.opencv.core.Core.BORDER_CONSTANT;
 import static org.opencv.core.Core.BORDER_DEFAULT;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Random;
 
 import it.chengdazhi.styleimageview.StyleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+import com.bumptech.glide.Glide;
 import com.example.aplikasita.dehaze.ImageDehazeResult;
+import com.example.aplikasita.network.data.RetrofitService;
+import com.example.aplikasita.network.data.UploadResponseData;
 import com.example.aplikasita.storage.FilterStorage;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
@@ -62,10 +75,10 @@ public class option extends AppCompatActivity {
     private FilterStorage newFilter;
 
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
-    private SeekBar seekbarDehaze2;
+//    private SeekBar seekbarDehaze2;
     private Uri imageUri;
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
-    private EditText dehaze2Txt;
+//    private EditText dehaze2Txt;
 
     private TextView MSEhsl, PSNRhsl;
 
@@ -103,7 +116,7 @@ public class option extends AppCompatActivity {
         // get bitmap
 
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
-        seekbarDehaze2 = findViewById(R.id.seekbar_dehaze2);
+//        seekbarDehaze2 = findViewById(R.id.seekbar_dehaze2);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
@@ -112,7 +125,7 @@ public class option extends AppCompatActivity {
         contrastTxt = findViewById(R.id.valueTxt2);
         saturationTxt = findViewById(R.id.valueTxt3);
         dehazeTxt = findViewById(R.id.valueTxt4);
-        dehaze2Txt = findViewById(R.id.valueTxt5);
+//        dehaze2Txt = findViewById(R.id.valueTxt5);
 
         MSEhsl = findViewById(R.id.mseHsl);
         PSNRhsl = findViewById(R.id.psnrHsl);
@@ -199,7 +212,7 @@ public class option extends AppCompatActivity {
         dehaze2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                uploadFile(bitmap);
             }
         });
 
@@ -468,6 +481,58 @@ public class option extends AppCompatActivity {
 
             }
         });
+    }
+
+    // Untuk Upload gambar ke server
+    private void uploadFile(Bitmap bitmap) {
+        String filename = "image.jpg";
+        File f = new File(this.getCacheDir(), filename);
+        try {
+            f.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Convert bitmap to byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), f);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", f.getName(), reqFile);
+
+        Call<UploadResponseData> call = RetrofitService.endPointService().uploadData(body);
+        if (call != null) {
+            call.enqueue(new Callback<UploadResponseData>() {
+                @Override
+                public void onResponse(Call<UploadResponseData> call, Response<UploadResponseData> response) {
+                    if (response.isSuccessful()) {
+                        String file_url = response.body().getFileUrl();
+                        Glide.with(option.this).asBitmap().load(file_url).into(imageView);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UploadResponseData> call, Throwable t) {
+                    Log.d("onFailure", t.getMessage());
+                }
+            });
+        }
     }
 
 
