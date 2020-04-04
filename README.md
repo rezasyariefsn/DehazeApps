@@ -8,4 +8,4 @@ Method : Dark Channel Prior
 
 Enhancement : Histogram Equalization, Saturation, Contrast, Brightness
 
-Value : MSE, PSNR
+Value : MSE, PSNR, Contrast Gain(Matlab/python), Saturated Pixel(Matlab/python)
