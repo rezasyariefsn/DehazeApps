@@ -4,7 +4,7 @@ Final Project with title : Implementation of Noise Removal and Image Enhancement
 Final Project for getting Bachelor of Computer Engineering
 
 
-Method : Dark Channel Prior
+Method : Dark Channel Prior, Bilateral Filtering(Rest API python)
 
 Enhancement : Histogram Equalization, Saturation, Contrast, Brightness
 
