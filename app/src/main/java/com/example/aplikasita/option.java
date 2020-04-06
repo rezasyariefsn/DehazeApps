@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -16,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,18 +23,12 @@ import android.widget.Toast;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
-import org.opencv.features2d.MSER;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.CvType;
 
 import static org.opencv.core.Core.absdiff;
-import static org.opencv.core.CvType.CV_32F;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
+
 import org.opencv.core.Core;
-import static org.opencv.core.Core.BORDER_CONSTANT;
-import static org.opencv.core.Core.BORDER_DEFAULT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,10 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Random;
 
 import it.chengdazhi.styleimageview.StyleImageView;
 import okhttp3.MediaType;
@@ -56,7 +47,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import com.bumptech.glide.Glide;
+import com.example.aplikasita.bitmap.BitmapLoader;
 import com.example.aplikasita.dehaze.ImageDehazeResult;
+import com.example.aplikasita.lib.UriToUrl;
 import com.example.aplikasita.network.data.RetrofitService;
 import com.example.aplikasita.network.data.UploadResponseData;
 import com.example.aplikasita.storage.FilterStorage;
@@ -73,12 +66,14 @@ public class option extends AppCompatActivity {
     private Bitmap originalBitmap;
     private BitmapDrawable originalBitmapDrawable;
     private FilterStorage newFilter;
+    private BitmapLoader bitmapLoader;
+    private ProgressBar progressBar;
 
     private SeekBar seekbarDehaze, seekBarBright, seekBarContrast, seekBarSaturation;
-//    private SeekBar seekbarDehaze2;
+
     private Uri imageUri;
+    private String imageUrl;
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
-//    private EditText dehaze2Txt;
 
     private TextView MSEhsl, PSNRhsl;
 
@@ -86,8 +81,6 @@ public class option extends AppCompatActivity {
     private Button PSNRbtn, MSEbtn;
     private Button dehaze2Button;
     OutputStream outputStream;
-//    private Random random = new Random();
-//    private int sourceId;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
     private int progressSeekbarDehaze;
@@ -104,13 +97,21 @@ public class option extends AppCompatActivity {
         Intent intent = getIntent();
         final Bitmap bitmap = intent.getParcelableExtra("image");
 
+        // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
+        imageUri = intent.getData();
+
         imageView = findViewById(R.id.imageView2);
         imageViewProcess1 = findViewById(R.id.imageView3);
         imageViewProcess2 = findViewById(R.id.imageView4);
 
         if (bitmap != null) {
             originalBitmap = bitmap;
-            imageView.setImageBitmap(bitmap);
+
+
+            // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
+//            imageView.setImageBitmap(bitmap);
+            OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+            oriImageLoader.execute();
         }
 
         // get bitmap
@@ -226,7 +227,6 @@ public class option extends AppCompatActivity {
                 // ngambil bitmap dari picture yang ditampilin
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
-
 
 
                 // Cari filter lain, cari parameter nya apa bandingkan dengan cara kualitatif ( masih nyoba on progress )
@@ -361,7 +361,6 @@ public class option extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
 
 
             }
@@ -513,10 +512,11 @@ public class option extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-            // ngirim file yang udah di buat ke server
+
+        // ngirim file yang udah di buat ke server
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), f);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", f.getName(), reqFile);
-            // ambil data dari server ketika sukses
+        // ambil data dari server ketika sukses
         Call<UploadResponseData> call = RetrofitService.endPointService().uploadData(body);
         if (call != null) {
             call.enqueue(new Callback<UploadResponseData>() {
@@ -539,9 +539,8 @@ public class option extends AppCompatActivity {
 
 
     // Get Value PSNR dan MSE
-    public double[] getMSE(Bitmap source, Bitmap result)
-    {
-        double[]hasil = new double[2];
+    public double[] getMSE(Bitmap source, Bitmap result) {
+        double[] hasil = new double[2];
         Mat resultMat = new Mat();
         Mat sourceMat = new Mat();
 //        Log.e("hasill3", "mat" );
@@ -549,21 +548,21 @@ public class option extends AppCompatActivity {
         Bitmap resultBitmap = result.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(sourceBitmap, sourceMat);
         Utils.bitmapToMat(resultBitmap, resultMat);
-        Log.e("hasill4", "bitmap"+sourceMat);
+        Log.e("hasill4", "bitmap" + sourceMat);
         Mat s1 = new Mat();
         Core.absdiff(sourceMat, resultMat, s1);  // |I1 - I2|
-        Log.e("hasillCore", "hasilll2" +s1);
+        Log.e("hasillCore", "hasilll2" + s1);
         s1.convertTo(s1, CvType.CV_8U); // cannot make a square on 8 bits
         s1 = s1.mul(s1); // |I1 - I2|^2
-        Log.e("yyoo", "hasilS1" +s1);
+        Log.e("yyoo", "hasilS1" + s1);
 
         Scalar s = Core.sumElems(s1); // sum element per channel
 
 
         double sse = s.val[0] + s.val[1] + s.val[2]; //sum channels
-        Log.e("hai", "hasilSSE" +sse);
-        if(sse <= 1e-30){ // for small values return zero
-            Log.e("error", "smallvalues" );
+        Log.e("hai", "hasilSSE" + sse);
+        if (sse <= 1e-30) { // for small values return zero
+            Log.e("error", "smallvalues");
             return new double[2];
         }
 
@@ -572,9 +571,8 @@ public class option extends AppCompatActivity {
         // rmse di akarin
 
 
-        else
-        {
-            double mse  = sse / (double)(sourceMat.channels() * sourceMat.total());
+        else {
+            double mse = sse / (double) (sourceMat.channels() * sourceMat.total());
             double psnr = 10.0 * Math.log10((255 * 255) / mse);
             hasil[0] = mse;
             hasil[1] = psnr;
@@ -594,8 +592,8 @@ public class option extends AppCompatActivity {
         Bitmap bmp32 = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
         Log.d("Matrik", Arrays.toString(mat.get(mat.rows(), mat.cols())));
-        for (int a = 0; a <(10); a++) {
-            for (int b = 0; b <(10); b++) {
+        for (int a = 0; a < (10); a++) {
+            for (int b = 0; b < (10); b++) {
                 Log.d("Matrik", "[" + a + "]" + "[" + b + "]" + Arrays.toString(mat.get(a, b)));
             }
         }
@@ -631,7 +629,6 @@ public class option extends AppCompatActivity {
         return results;
     }
 
-    // FIXME Diwang nambahin method ngubah int Seekbar jadi float
     private float getThreshold(int valueSeekbar) {
         float thresHold;
         // integer si seekbar itu 0 - 100, mesti di convert ke float yang grafiknya exponential (liat di paper)
@@ -646,4 +643,77 @@ public class option extends AppCompatActivity {
 //
         return thresHold;
     }
+
+    // FIXME Diwang nambahin asynctask buat ngeload image hasil potret ke imageView nya
+    private class OriginalImageLoaderThread extends AsyncTask<Void,Void,Bitmap>{
+
+        public OriginalImageLoaderThread(){
+            imageUrl = UriToUrl.get(getApplicationContext(),imageUri);
+            bitmapLoader = new BitmapLoader();
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            try {
+                // proses utama, nge bikin gambar dari URL yang udah kita dapet dari hasil potret
+                return bitmapLoader.load(getApplicationContext(),new int[]{imageView.getWidth(),imageView.getHeight()},imageUrl);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap hasilLoadDariUrl) {
+            super.onPostExecute(hasilLoadDariUrl);
+
+            // udah dapet nih gambar bagusnya di @bitmap di atas
+            imageView.setImageBitmap(hasilLoadDariUrl);
+
+            // Kita bikin auto dehaze aja ya begitu masuk ke activity ini? step2nya.
+
+            // tampilin progress bar biar cakep
+            progressBar = findViewById(R.id.progressBar1);
+            progressBar.setVisibility(View.VISIBLE);
+
+            // lanjut, panggil thread dehazer!
+            new DehazedImageLoaderThread().execute(hasilLoadDariUrl);
+
+        }
+    }
+
+    private class DehazedImageLoaderThread extends AsyncTask<Bitmap, Void, ImageDehazeResult> {
+
+        public DehazedImageLoaderThread() {
+            imageUrl = UriToUrl.get(getApplicationContext(), imageUri);
+            bitmapLoader = new BitmapLoader();
+        }
+
+        @Override
+        protected ImageDehazeResult doInBackground(Bitmap... bitmapAsliDariThreadSblmnya) {
+            // Menerima bitmap original yang didapat dari proses OriginalBitmapLoader (thread sebelumnya)
+            Bitmap bitmap = bitmapAsliDariThreadSblmnya[0];
+            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+            // kirim ke PostExecute di bawah
+            return new ImageDehazeResult(hazeRemover.dehaze(pixels,bitmap.getHeight(),bitmap.getWidth()));
+        }
+
+        @Override
+        protected void onPostExecute(ImageDehazeResult imageDehazeResult) {
+            super.onPostExecute(imageDehazeResult);
+
+            // set image hasil dehaze image sebelahnya
+            imageViewProcess1.setImageBitmap(imageDehazeResult.getResult());
+
+            // set image depth hasil dehaze ke sebelahnya lagi
+            imageViewProcess2.setImageBitmap(imageDehazeResult.getDepth());
+
+            // udahan progress bar nya, muter mulu.
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+
 }
