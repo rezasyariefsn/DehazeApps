@@ -80,6 +80,7 @@ public class option extends AppCompatActivity {
     private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
     private Button PSNRbtn, MSEbtn;
     private Button dehaze2Button;
+    private Button tmpl_gmbr;
     OutputStream outputStream;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
@@ -93,9 +94,7 @@ public class option extends AppCompatActivity {
         newFilter = new FilterStorage();
 
         // main image (ditampilin)
-        // Menampilkan Imageview2 dari ImageView1
-        Intent intent = getIntent();
-        final Bitmap bitmap = intent.getParcelableExtra("image");
+
 
         imageView = findViewById(R.id.imageView2);
         imageViewProcess1 = findViewById(R.id.imageView3);
@@ -122,15 +121,24 @@ public class option extends AppCompatActivity {
         histeqBtn = findViewById(R.id.histeqButton);
         PSNRbtn = findViewById(R.id.psnrBtn);
         MSEbtn = findViewById(R.id.mseBtn);
+        tmpl_gmbr = findViewById(R.id.tmplGambar_button);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
 
-
+        // Menampilkan Imageview2 dari ImageView1
         // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
-        imageUri = intent.getData();
+        imageUri = getIntent().getData();
 
         // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
         OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
         oriImageLoader.execute();
+
+        tmpl_gmbr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+                oriImageLoader.execute();
+            }
+        });
 
         PSNRbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +212,7 @@ public class option extends AppCompatActivity {
         dehaze2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFile(bitmap);
+                uploadFile(originalBitmap);
             }
         });
 
@@ -245,7 +253,7 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Mat sourceMat = new Mat();
-                Utils.bitmapToMat(bitmap, sourceMat);
+                Utils.bitmapToMat(originalBitmap, sourceMat);
                 Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
                 Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_RGB2GRAY);
 //              Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
@@ -647,7 +655,7 @@ public class option extends AppCompatActivity {
 
             // udah dapet nih gambar bagusnya di @bitmap di atas
 
-            Log.d("Load ori image","Dapet bitmapnya!");
+            Log.d("Load ori image","Dapet bitmapnya!" + hasilLoadDariUrl.getWidth() + ", Height: " + hasilLoadDariUrl.getHeight());
 //            Log.d("Width n Height")
 
             imageView.setImageBitmap(hasilLoadDariUrl);
