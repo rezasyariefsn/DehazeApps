@@ -138,6 +138,7 @@ public class kameraFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), option.class);
+                Log.d("Gofiter","Image uri: "+imageUri.toString());
                 intent.setData(imageUri);
                 startActivity(intent);
             }
@@ -201,19 +202,6 @@ public class kameraFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 1) {
                 try {
-                    //
-//                    if (data.getExtras().get("data") != null) {
-//                        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-//                        imageView1.setImageBitmap(bitmap);
-//                        getMatrik(bitmap);
-//                        histogram(bitmap);
-//                        Gofilter.setEnabled(true);
-//                        Log.d("Rotate", bitmap.getWidth() + ";" + bitmap.getHeight());
-//                        Log.d("reza", bitmap.toString());
-//                        Log.d("reza", "tes");
-//                    }
-
-                    // Fixme ngubah cara nampilin image di wadah kecilnya. Pindah ke line 460+
                     OriginalImageLoaderThread loader = new OriginalImageLoaderThread();
                     loader.execute();
 
@@ -226,21 +214,6 @@ public class kameraFragment extends Fragment {
                 imageUri = data.getData();
                 OriginalImageLoaderThread loader = new OriginalImageLoaderThread();
                 loader.execute();
-//                try {
-//                    imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
-//                    imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * 0.07), (int) (imageBitmap.getHeight() * 0.07), true);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                Log.d("Rotate", imageBitmap.getWidth() + ";" + imageBitmap.getHeight());
-//                    Matrix matrix = new Matrix();
-//                    matrix.postRotate(-90);
-//                    imageBitmap =  Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
-
-//                imageView1.setImageBitmap(imageBitmap);
-//                histogram(imageBitmap);
-//                getMatrik(imageBitmap);
-//                Gofilter.setEnabled(true);
             }
 
         } else {
@@ -456,15 +429,14 @@ public class kameraFragment extends Fragment {
 
             // udah dapet nih gambar bagusnya di @bitmap di atas
 
+            Log.d("ImageURI","Dari kamerafragment: "+imageUri.toString());
+
             imageView1.setImageBitmap(hasilLoadDariUrl);
             histogram(hasilLoadDariUrl);
             getMatrik(hasilLoadDariUrl);
             Gofilter.setEnabled(true);
 
             Log.d("Check Scale", "Width: " + hasilLoadDariUrl.getWidth() + ", Height: " + hasilLoadDariUrl.getHeight());
-
-            // Kita bikin auto dehaze aja ya begitu masuk ke activity ini? step2nya.
-
         }
     }
 }

@@ -35,6 +35,16 @@
             <!--                android:layout_marginTop="40dp"-->
             <!--                android:layout_marginLeft="100dp"/>-->
 
+            <ImageView
+                android:id="@+id/imageViewAlt"
+                android:layout_width="252dp"
+                android:layout_height="154dp"
+                android:layout_marginLeft="75dp"
+                android:layout_marginTop="40dp"
+                android:padding="25dp"
+                android:visibility="gone"/>
+
+
             <it.chengdazhi.styleimageview.StyleImageView
                 android:id="@+id/imageView2"
                 android:layout_width="252dp"
