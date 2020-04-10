@@ -97,27 +97,10 @@ public class option extends AppCompatActivity {
         Intent intent = getIntent();
         final Bitmap bitmap = intent.getParcelableExtra("image");
 
-        // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
-        imageUri = intent.getData();
-
         imageView = findViewById(R.id.imageView2);
         imageViewProcess1 = findViewById(R.id.imageView3);
         imageViewProcess2 = findViewById(R.id.imageView4);
-
-        if (bitmap != null) {
-            originalBitmap = bitmap;
-
-
-            // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
-//            imageView.setImageBitmap(bitmap);
-            OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
-            oriImageLoader.execute();
-        }
-
-        // get bitmap
-
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
-//        seekbarDehaze2 = findViewById(R.id.seekbar_dehaze2);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
@@ -140,6 +123,14 @@ public class option extends AppCompatActivity {
         PSNRbtn = findViewById(R.id.psnrBtn);
         MSEbtn = findViewById(R.id.mseBtn);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
+
+
+        // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
+        imageUri = intent.getData();
+
+        // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
+        OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+        oriImageLoader.execute();
 
         PSNRbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,24 +216,11 @@ public class option extends AppCompatActivity {
                 // FIXME Diwang nambahin action waktu dehaze
 
                 // ngambil bitmap dari picture yang ditampilin
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
-                Bitmap bitmap = bitmapDrawable.getBitmap();
+                progressBar = findViewById(R.id.progressBar1);
+                progressBar.setVisibility(View.VISIBLE);
 
-
-                // Cari filter lain, cari parameter nya apa bandingkan dengan cara kualitatif ( masih nyoba on progress )
-                // Nilai kabutnya darimana (threshold) , cek dengan rumus nya kabut nya masih ada apa engga
-                // Cara validasi kabut nya dari metode nya gimana ( depth map )
-
-                // Validasi kabut ambil dari threshold transmission nya sama liat dari depth map
-
-                // tulis di buku TA algoritma nyaa
-
-                // process tiap gambar - dehaze gimana
-                ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
-                imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
-                imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
-                imageView.setImageBitmap(resultDehazed[2].getResult());
-                getMatrik(bitmap);
+                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread();
+                loadImageHasilDehaze.execute(originalBitmap);
             }
         });
 
@@ -645,10 +623,10 @@ public class option extends AppCompatActivity {
     }
 
     // FIXME Diwang nambahin asynctask buat ngeload image hasil potret ke imageView nya
-    private class OriginalImageLoaderThread extends AsyncTask<Void,Void,Bitmap>{
+    private class OriginalImageLoaderThread extends AsyncTask<Void, Void, Bitmap> {
 
-        public OriginalImageLoaderThread(){
-            imageUrl = UriToUrl.get(getApplicationContext(),imageUri);
+        public OriginalImageLoaderThread() {
+            imageUrl = UriToUrl.get(getApplicationContext(), imageUri);
             bitmapLoader = new BitmapLoader();
         }
 
@@ -656,7 +634,7 @@ public class option extends AppCompatActivity {
         protected Bitmap doInBackground(Void... voids) {
             try {
                 // proses utama, nge bikin gambar dari URL yang udah kita dapet dari hasil potret
-                return bitmapLoader.load(getApplicationContext(),new int[]{imageView.getWidth(),imageView.getHeight()},imageUrl);
+                return bitmapLoader.load(getApplicationContext(), new int[]{imageView.getWidth(), imageView.getHeight()}, imageUrl);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -668,17 +646,12 @@ public class option extends AppCompatActivity {
             super.onPostExecute(hasilLoadDariUrl);
 
             // udah dapet nih gambar bagusnya di @bitmap di atas
+
+            Log.d("Load ori image","Dapet bitmapnya!");
+//            Log.d("Width n Height")
+
             imageView.setImageBitmap(hasilLoadDariUrl);
-
-            // Kita bikin auto dehaze aja ya begitu masuk ke activity ini? step2nya.
-
-            // tampilin progress bar biar cakep
-            progressBar = findViewById(R.id.progressBar1);
-            progressBar.setVisibility(View.VISIBLE);
-
-            // lanjut, panggil thread dehazer!
-            new DehazedImageLoaderThread().execute(hasilLoadDariUrl);
-
+            originalBitmap = hasilLoadDariUrl;
         }
     }
 
@@ -697,7 +670,7 @@ public class option extends AppCompatActivity {
             bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
             // kirim ke PostExecute di bawah
-            return new ImageDehazeResult(hazeRemover.dehaze(pixels,bitmap.getHeight(),bitmap.getWidth()));
+            return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth()));
         }
 
         @Override
@@ -712,6 +685,20 @@ public class option extends AppCompatActivity {
 
             // udahan progress bar nya, muter mulu.
             progressBar.setVisibility(View.GONE);
+            // Cari filter lain, cari parameter nya apa bandingkan dengan cara kualitatif ( masih nyoba on progress )
+            // Nilai kabutnya darimana (threshold) , cek dengan rumus nya kabut nya masih ada apa engga
+            // Cara validasi kabut nya dari metode nya gimana ( depth map )
+
+            // Validasi kabut ambil dari threshold transmission nya sama liat dari depth map
+
+            // tulis di buku TA algoritma nyaa
+
+            // process tiap gambar - dehaze gimana
+//            ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, 100);
+//            imageViewProcess1.setImageBitmap(resultDehazed[0].getResult());
+//            imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
+//            imageView.setImageBitmap(resultDehazed[2].getResult());
+            getMatrik(originalBitmap);
         }
     }
 

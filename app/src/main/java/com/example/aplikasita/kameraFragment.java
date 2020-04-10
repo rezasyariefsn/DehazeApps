@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.aplikasita.bitmap.BitmapLoader;
+import com.example.aplikasita.lib.UriToUrl;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.Utils;
@@ -75,6 +79,8 @@ public class kameraFragment extends Fragment {
     private Button Gofilter;
     private boolean isImageHistogram = false;
     private Bitmap imageBitmap;
+    private String imageUrl;
+    private BitmapLoader bitmapLoader;
 
 //    private ImageView inputImg, inputImg1, outputImg, outputImg1, iv1, iv2, iv3, iv4;
 //    private Bitmap inputBmp, bmp1, bmp2;
@@ -133,18 +139,7 @@ public class kameraFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), option.class);
                 intent.setData(imageUri);
-//                intent.putExtra("imageUri", imageUri.toString());
-//                startActivity(intent);
-                if (imageView1.getDrawable() == null) {
-//                    intent.putExtra("imageUri", imageUri.toString());
-                    startActivity(intent);
-                } else {
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView1.getDrawable();
-                    Bitmap bitmap = bitmapDrawable.getBitmap();
-                    Log.d("bitmap", bitmap.getWidth() + " " + bitmap.getHeight());
-                    intent.putExtra("image", bitmap);
-                    startActivity(intent);
-                }
+                startActivity(intent);
             }
         });
 
@@ -186,7 +181,7 @@ public class kameraFragment extends Fragment {
                 if (options[which].equals("Take Photo")) {
                     imageUri = getOutputMediaFile();
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     startActivityForResult(intent, 1);
                 } else if (options[which].equals("Open Gallery")) {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -205,33 +200,47 @@ public class kameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 1) {
-                if (data.getExtras().get("data") != null) {
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                    imageView1.setImageBitmap(bitmap);
-                    getMatrik(bitmap);
-                    histogram(bitmap);
+                try {
+                    //
+//                    if (data.getExtras().get("data") != null) {
+//                        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//                        imageView1.setImageBitmap(bitmap);
+//                        getMatrik(bitmap);
+//                        histogram(bitmap);
+//                        Gofilter.setEnabled(true);
+//                        Log.d("Rotate", bitmap.getWidth() + ";" + bitmap.getHeight());
+//                        Log.d("reza", bitmap.toString());
+//                        Log.d("reza", "tes");
+//                    }
+
+                    // Fixme ngubah cara nampilin image di wadah kecilnya. Pindah ke line 460+
+                    OriginalImageLoaderThread loader = new OriginalImageLoaderThread();
+                    loader.execute();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                     Gofilter.setEnabled(true);
-                    Log.d("Rotate", bitmap.getWidth() + ";" + bitmap.getHeight());
-                    Log.d("reza", bitmap.toString());
-                    Log.d("reza", "tes");
+
                 }
             } else if (requestCode == 2 && resultCode == Activity.RESULT_OK && data != null) {
                 imageUri = data.getData();
-                try {
-                    imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
-                    imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * 0.07), (int) (imageBitmap.getHeight() * 0.07), true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Log.d("Rotate", imageBitmap.getWidth() + ";" + imageBitmap.getHeight());
+                OriginalImageLoaderThread loader = new OriginalImageLoaderThread();
+                loader.execute();
+//                try {
+//                    imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
+//                    imageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * 0.07), (int) (imageBitmap.getHeight() * 0.07), true);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                Log.d("Rotate", imageBitmap.getWidth() + ";" + imageBitmap.getHeight());
 //                    Matrix matrix = new Matrix();
 //                    matrix.postRotate(-90);
 //                    imageBitmap =  Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
 
-                imageView1.setImageBitmap(imageBitmap);
-                histogram(imageBitmap);
-                getMatrik(imageBitmap);
-                Gofilter.setEnabled(true);
+//                imageView1.setImageBitmap(imageBitmap);
+//                histogram(imageBitmap);
+//                getMatrik(imageBitmap);
+//                Gofilter.setEnabled(true);
             }
 
         } else {
@@ -421,5 +430,41 @@ public class kameraFragment extends Fragment {
         values.put(MediaStore.Images.Media.TITLE, "Tugas Akhir Reza");
         values.put(MediaStore.Images.Media.DESCRIPTION, "Sample image to be dehazed");
         return getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    private class OriginalImageLoaderThread extends AsyncTask<Void, Void, Bitmap> {
+
+        public OriginalImageLoaderThread() {
+            imageUrl = UriToUrl.get(getContext(), imageUri);
+            bitmapLoader = new BitmapLoader();
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            try {
+                // proses utama, nge bikin gambar dari URL yang udah kita dapet dari hasil potret
+                return bitmapLoader.load(getContext(), new int[]{imageView1.getWidth(), imageView1.getHeight()}, imageUrl);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap hasilLoadDariUrl) {
+            super.onPostExecute(hasilLoadDariUrl);
+
+            // udah dapet nih gambar bagusnya di @bitmap di atas
+
+            imageView1.setImageBitmap(hasilLoadDariUrl);
+            histogram(hasilLoadDariUrl);
+            getMatrik(hasilLoadDariUrl);
+            Gofilter.setEnabled(true);
+
+            Log.d("Check Scale", "Width: " + hasilLoadDariUrl.getWidth() + ", Height: " + hasilLoadDariUrl.getHeight());
+
+            // Kita bikin auto dehaze aja ya begitu masuk ke activity ini? step2nya.
+
+        }
     }
 }
