@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -50,7 +49,6 @@ import retrofit2.Response;
 import com.bumptech.glide.Glide;
 import com.example.aplikasita.bitmap.BitmapLoader;
 import com.example.aplikasita.dehaze.ImageDehazeResult;
-import com.example.aplikasita.lib.Toaster;
 import com.example.aplikasita.lib.UriToUrl;
 import com.example.aplikasita.network.data.RetrofitService;
 import com.example.aplikasita.network.data.UploadResponseData;
@@ -59,8 +57,6 @@ import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
 
 public class option extends AppCompatActivity {
-
-    private ImageView imageViewAlternatif;
 
     private StyleImageView imageView;
     private StyleImageView imageViewProcess1;
@@ -84,6 +80,7 @@ public class option extends AppCompatActivity {
     private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
     private Button PSNRbtn, MSEbtn;
     private Button dehaze2Button;
+    private Button tmpl_gmbr;
     OutputStream outputStream;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
@@ -97,10 +94,8 @@ public class option extends AppCompatActivity {
         newFilter = new FilterStorage();
 
         // main image (ditampilin)
-        // Menampilkan Imageview2 dari ImageView1
-        Intent intent = getIntent();
 
-        imageViewAlternatif = findViewById(R.id.imageViewAlt);
+
         imageView = findViewById(R.id.imageView2);
         imageViewProcess1 = findViewById(R.id.imageView3);
         imageViewProcess2 = findViewById(R.id.imageView4);
@@ -108,12 +103,16 @@ public class option extends AppCompatActivity {
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
+
         brightnessTxt = findViewById(R.id.valueTxt1);
         contrastTxt = findViewById(R.id.valueTxt2);
         saturationTxt = findViewById(R.id.valueTxt3);
         dehazeTxt = findViewById(R.id.valueTxt4);
+//        dehaze2Txt = findViewById(R.id.valueTxt5);
+
         MSEhsl = findViewById(R.id.mseHsl);
         PSNRhsl = findViewById(R.id.psnrHsl);
+
         savePhoto = findViewById(R.id.save_photo);
         saveFilter = findViewById(R.id.save_filter);
         dehazeButton = findViewById(R.id.dehaze_button);
@@ -122,26 +121,24 @@ public class option extends AppCompatActivity {
         histeqBtn = findViewById(R.id.histeqButton);
         PSNRbtn = findViewById(R.id.psnrBtn);
         MSEbtn = findViewById(R.id.mseBtn);
+        tmpl_gmbr = findViewById(R.id.tmplGambar_button);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
 
-
+        // Menampilkan Imageview2 dari ImageView1
         // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
-        if (savedInstanceState==null) {
-            Log.d("SavedInstance","Adalah null");
-            imageUri = getIntent().getData();
-            try {
-                // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
+        imageUri = getIntent().getData();
+
+        // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
+        OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+        oriImageLoader.execute();
+
+        tmpl_gmbr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
                 oriImageLoader.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toaster.make(getApplicationContext(), "Error displaying image");
             }
-        } else {
-            Log.d("SavedInstance","ada isinya!");
-            imageUrl = savedInstanceState.getString("a2");
-            setImage((Bitmap) savedInstanceState.getParcelable("a1"));
-        }
+        });
 
         PSNRbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,7 +212,7 @@ public class option extends AppCompatActivity {
         dehaze2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                uploadFile(bitmap);
+                uploadFile(originalBitmap);
             }
         });
 
@@ -227,16 +224,11 @@ public class option extends AppCompatActivity {
                 // FIXME Diwang nambahin action waktu dehaze
 
                 // ngambil bitmap dari picture yang ditampilin
+                progressBar = findViewById(R.id.progressBar1);
+                progressBar.setVisibility(View.VISIBLE);
 
-//                // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
-                OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
-                oriImageLoader.execute();
-//
-//                progressBar = findViewById(R.id.progressBar1);
-//                progressBar.setVisibility(View.VISIBLE);
-//
-//                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread();
-//                loadImageHasilDehaze.execute(originalBitmap);
+                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread();
+                loadImageHasilDehaze.execute(originalBitmap);
             }
         });
 
@@ -261,7 +253,7 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Mat sourceMat = new Mat();
-//                Utils.bitmapToMat(bitmap, sourceMat);
+                Utils.bitmapToMat(originalBitmap, sourceMat);
                 Mat destinationMat = new Mat(sourceMat.size(), sourceMat.type());
                 Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_RGB2GRAY);
 //              Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_GRAY2RGB);
@@ -663,11 +655,10 @@ public class option extends AppCompatActivity {
 
             // udah dapet nih gambar bagusnya di @bitmap di atas
 
-            Log.d("Load ori image","Dapet bitmapnya!");
-            Log.d("Width n Height","Width: "+hasilLoadDariUrl.getWidth()+", Height: "+hasilLoadDariUrl.getHeight());
+            Log.d("Load ori image","Dapet bitmapnya!" + hasilLoadDariUrl.getWidth() + ", Height: " + hasilLoadDariUrl.getHeight());
+//            Log.d("Width n Height")
 
             imageView.setImageBitmap(hasilLoadDariUrl);
-            Log.d("Width n Height","Style image view, Width: "+imageViewAlternatif.getWidth()+", Height: "+imageViewAlternatif.getHeight());
             originalBitmap = hasilLoadDariUrl;
         }
     }
@@ -716,20 +707,6 @@ public class option extends AppCompatActivity {
 //            imageViewProcess2.setImageBitmap(resultDehazed[1].getResult());
 //            imageView.setImageBitmap(resultDehazed[2].getResult());
             getMatrik(originalBitmap);
-        }
-    }
-
-    private void setImage(Bitmap bitmap) {
-        //hideLoading();
-        try {
-            if (bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-            } else {
-                Toaster.make(getApplicationContext(), "Error on set image");
-            }
-        } catch (Exception e) {
-            Toaster.make(getApplicationContext(), e.getMessage());
-            e.printStackTrace();
         }
     }
 
