@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import static com.example.dehaze.ColorUtils.*;
 
 public class HazeRemover {
-    private static final float TRANSMISSION_THRESHOLD = 0.2f;
+    public static final float TRANSMISSION_THRESHOLD = 0.2f;
     private static final int MAX_ATMOSPHERE = 220;
     private static final int DARK_CHANNEL_WINDOW_RADIUS = 7;
     private static final float OMEGA = 0.95f;
