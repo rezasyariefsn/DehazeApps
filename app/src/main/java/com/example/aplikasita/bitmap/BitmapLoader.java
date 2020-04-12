@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
-import com.example.aplikasita.lib.MemoryManagement;
 import com.example.aplikasita.lib.UriToUrl;
 
 
@@ -49,18 +48,5 @@ public class BitmapLoader {
         return null;
     }
 
-    public Bitmap load(Context context, String image_url) throws Exception {
-        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-
-        bitmapOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(image_url, bitmapOptions);
-
-        final float imageSize = (float) bitmapOptions.outWidth * (float) bitmapOptions.outHeight * 4.0f / 1024.0f / 1024.0f; // MB
-
-        bitmapOptions.inSampleSize = (int) Math.pow(2, Math.floor(imageSize / MemoryManagement.free(context)));
-        bitmapOptions.inJustDecodeBounds = false;
-
-        return BitmapProcessing.modifyOrientation(BitmapFactory.decodeFile(image_url, bitmapOptions), image_url);
-    }
 
 }

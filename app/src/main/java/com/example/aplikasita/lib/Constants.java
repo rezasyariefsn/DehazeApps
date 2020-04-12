@@ -1,8 +1,6 @@
 package com.example.aplikasita.lib;
 
-/**
- * Created by iisaev on 16/04/16.
- */
+
 public class Constants {
 
     public static final String EXTRA_KEY_IMAGE_SOURCE = "e1";

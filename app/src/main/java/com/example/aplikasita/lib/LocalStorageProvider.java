@@ -30,7 +30,7 @@ import java.io.IOException;
 @SuppressLint("NewApi")
 public class LocalStorageProvider extends DocumentsProvider {
 
-    public static final String AUTHORITY = "com.ianhanniballake.localstorage.documents";
+    public static final String AUTHORITY = "";
 
     /**
      * Default root projection: everything but Root.COLUMN_MIME_TYPES
