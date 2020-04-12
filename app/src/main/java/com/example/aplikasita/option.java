@@ -53,6 +53,7 @@ import com.example.aplikasita.lib.UriToUrl;
 import com.example.aplikasita.network.data.RetrofitService;
 import com.example.aplikasita.network.data.UploadResponseData;
 import com.example.aplikasita.storage.FilterStorage;
+import com.example.dehaze.DehazeResult;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
 
@@ -642,6 +643,7 @@ public class option extends AppCompatActivity {
         protected Bitmap doInBackground(Void... voids) {
             try {
                 // proses utama, nge bikin gambar dari URL yang udah kita dapet dari hasil potret
+                Log.d("DoInBackGround","size: "+imageView.getWidth()+", "+imageView.getHeight());
                 return bitmapLoader.load(getApplicationContext(), new int[]{imageView.getWidth(), imageView.getHeight()}, imageUrl);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -674,11 +676,14 @@ public class option extends AppCompatActivity {
         protected ImageDehazeResult doInBackground(Bitmap... bitmapAsliDariThreadSblmnya) {
             // Menerima bitmap original yang didapat dari proses OriginalBitmapLoader (thread sebelumnya)
             Bitmap bitmap = bitmapAsliDariThreadSblmnya[0];
-            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            if (bitmap!=null) {
+                int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
-            // kirim ke PostExecute di bawah
-            return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth()));
+                // kirim ke PostExecute di bawah
+                return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth()));
+            }
+            return null;
         }
 
         @Override
