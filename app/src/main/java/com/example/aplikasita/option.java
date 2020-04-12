@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import it.chengdazhi.styleimageview.StyleImageView;
 import okhttp3.MediaType;
@@ -222,15 +223,30 @@ public class option extends AppCompatActivity {
         dehazeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // FIXME Diwang nambahin action waktu dehaze
+                // Nampilin Hasil Dehaze bedasarkan dehazedTxt
 
-                // ngambil bitmap dari picture yang ditampilin
-                progressBar = findViewById(R.id.progressBar1);
-                progressBar.setVisibility(View.VISIBLE);
+                // 1. ambil value di dalem txt, edit apa yg diinput user
+                String valueInput = dehazeTxt.getText().toString().trim();
 
-                // Nampilin Hasil Dehaze
-                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(TRANSMISSION_THRESHOLD);
-                loadImageHasilDehaze.execute(originalBitmap);
+                // 2. set dulu hasil editan kita ke dehazedtxt nya
+                dehazeTxt.setText(valueInput);
+
+                // 3. validate input text
+                if (isInputDehazeValueValid(valueInput)){
+
+                    // 4. bikin loading bar
+                    progressBar = findViewById(R.id.progressBar1);
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    // 5. ambil nilai float dari value nya
+                    float floatInputValue = Float.parseFloat(valueInput);
+
+                    // 6. lakukan proses dehaze
+                    DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(floatInputValue);
+                    loadImageHasilDehaze.execute(originalBitmap);
+                } else {
+                    Toast.makeText(getApplicationContext(),"Masukan angka yang valid!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -345,12 +361,19 @@ public class option extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // input enter apa engga , backslash = enter
-                if (s.subSequence(start, start + 1).toString().equalsIgnoreCase("\n")) {
-                    String value = s.toString();
-                    float thresholdValue = Float.parseFloat(value);
-                    DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(thresholdValue);
-                    loadImageHasilDehaze.execute(originalBitmap);
-                    // Tinggal ubah value threshold
+                // FIXME Ini udah ga kepake
+                if (count>before){
+                    if (s.subSequence(start, start + 1).toString().equalsIgnoreCase("\n")) {
+
+                        Log.d("Option","after enter button");
+
+                        String value = s.toString();
+                        float thresholdValue = Float.parseFloat(value);
+
+                        DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(thresholdValue);
+                        loadImageHasilDehaze.execute(originalBitmap);
+                        // Tinggal ubah value threshold
+                    }
                 }
 
             }
@@ -476,6 +499,12 @@ public class option extends AppCompatActivity {
 
             }
         });
+    }
+
+    // FIXME ini method untuk validasi decimal input nya
+    private boolean isInputDehazeValueValid(String valueInput) {
+        Pattern decimalPattern = Pattern.compile("^\\d+(\\.\\d+)?$");
+        return decimalPattern.matcher(valueInput).matches();
     }
 
     // Untuk Upload gambar ke server
