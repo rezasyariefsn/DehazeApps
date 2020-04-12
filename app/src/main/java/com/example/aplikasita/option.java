@@ -26,6 +26,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.CvType;
 
+import static com.example.dehaze.HazeRemover.TRANSMISSION_THRESHOLD;
 import static org.opencv.core.Core.absdiff;
 
 import org.opencv.core.Core;
@@ -53,15 +54,14 @@ import com.example.aplikasita.lib.UriToUrl;
 import com.example.aplikasita.network.data.RetrofitService;
 import com.example.aplikasita.network.data.UploadResponseData;
 import com.example.aplikasita.storage.FilterStorage;
-import com.example.dehaze.DehazeResult;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
 
 public class option extends AppCompatActivity {
 
     private StyleImageView imageView;
-    private StyleImageView imageViewProcess1;
-    private StyleImageView imageViewProcess2;
+    private StyleImageView imageViewDehaze;
+    private StyleImageView imageViewDepthMap;
 
     // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
     private Bitmap originalBitmap;
@@ -84,7 +84,7 @@ public class option extends AppCompatActivity {
     private Button tmpl_gmbr;
     OutputStream outputStream;
 
-    private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 1500, 1500);
+    private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 2000, 2000);
     private int progressSeekbarDehaze;
 
     @Override
@@ -98,8 +98,8 @@ public class option extends AppCompatActivity {
 
 
         imageView = findViewById(R.id.imageView2);
-        imageViewProcess1 = findViewById(R.id.imageView3);
-        imageViewProcess2 = findViewById(R.id.imageView4);
+        imageViewDehaze = findViewById(R.id.imageView3);
+        imageViewDepthMap = findViewById(R.id.imageView4);
         seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
@@ -145,7 +145,7 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String hasilpsnr = "";
-                double psnr = getMSE(originalBitmap, imageView.getBitmap())[1];
+                double psnr = getMSE(originalBitmap, imageViewDehaze.getBitmap())[1];
                 hasilpsnr = String.format("%.2f", psnr);
                 PSNRhsl.setText(hasilpsnr);
 
@@ -156,7 +156,7 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String hasilmse = "";
-                double mse = getMSE(originalBitmap, imageView.getBitmap())[0];
+                double mse = getMSE(originalBitmap, imageViewDehaze.getBitmap())[0];
                 hasilmse = String.format("%.2f", mse);
                 MSEhsl.setText(hasilmse);
 
@@ -167,7 +167,7 @@ public class option extends AppCompatActivity {
         savePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+                BitmapDrawable drawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
 
                 File filepath = Environment.getExternalStorageDirectory();
@@ -228,7 +228,8 @@ public class option extends AppCompatActivity {
                 progressBar = findViewById(R.id.progressBar1);
                 progressBar.setVisibility(View.VISIBLE);
 
-                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread();
+                // Nampilin Hasil Dehaze
+                DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(TRANSMISSION_THRESHOLD);
                 loadImageHasilDehaze.execute(originalBitmap);
             }
         });
@@ -263,7 +264,7 @@ public class option extends AppCompatActivity {
                 Bitmap equalizerBitmap = Bitmap.createBitmap(sourceMat.cols(), sourceMat.rows(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(destinationMat, equalizerBitmap);
 
-                imageView.setImageBitmap(equalizerBitmap);
+                imageViewDehaze.setImageBitmap(equalizerBitmap);
 
             }
         });
@@ -283,8 +284,8 @@ public class option extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
-                    imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                    imageViewDehaze.setBrightness(Integer.parseInt(s.toString())).updateStyle();
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
                     getMatrik(bitmap);
                 }
@@ -305,8 +306,8 @@ public class option extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
-                    imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                    imageViewDehaze.setBrightness(Integer.parseInt(s.toString())).updateStyle();
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
                     getMatrik(bitmap);
                 }
@@ -327,8 +328,8 @@ public class option extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() != 0 && !s.toString().equals("-") && Integer.parseInt(s.toString()) < 255 && Integer.parseInt(s.toString()) > -255) {
-                    imageView.setBrightness(Integer.parseInt(s.toString())).updateStyle();
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                    imageViewDehaze.setBrightness(Integer.parseInt(s.toString())).updateStyle();
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                     Bitmap bitmap = bitmapDrawable.getBitmap();
                     getMatrik(bitmap);
                 }
@@ -343,6 +344,14 @@ public class option extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // input enter apa engga , backslash = enter
+                if (s.subSequence(start, start + 1).toString().equalsIgnoreCase("\n")) {
+                    String value = s.toString();
+                    float thresholdValue = Float.parseFloat(value);
+                    DehazedImageLoaderThread loadImageHasilDehaze = new DehazedImageLoaderThread(thresholdValue);
+                    loadImageHasilDehaze.execute(originalBitmap);
+                    // Tinggal ubah value threshold
+                }
 
             }
 
@@ -369,7 +378,7 @@ public class option extends AppCompatActivity {
 
                         // nge dehaze, terus tampilin imageview dehazed yang baru
                         ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
-                        imageView.setImageBitmap(resultDehazed[2].getResult());
+                        imageViewDehaze.setImageBitmap(resultDehazed[2].getResult());
 
                         progressSeekbarDehaze = progress;
 
@@ -399,7 +408,7 @@ public class option extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        imageView.setBrightness(i - 255).updateStyle();
+                        imageViewDehaze.setBrightness(i - 255).updateStyle();
                         BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         getMatrik(bitmap);
@@ -427,8 +436,8 @@ public class option extends AppCompatActivity {
         seekBarContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBarContrast, int i, boolean fromUser) {
-                imageView.setContrast(i / 100F).updateStyle();
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                imageViewDehaze.setContrast(i / 100F).updateStyle();
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 contrastTxt.setText(String.valueOf(i - 250));
@@ -449,8 +458,8 @@ public class option extends AppCompatActivity {
         seekBarSaturation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBarSaturation, int i, boolean fromUser) {
-                imageView.setSaturation(i / 100F).updateStyle();
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                imageViewDehaze.setSaturation(i / 100F).updateStyle();
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 saturationTxt.setText(String.valueOf(i - 250));
@@ -643,7 +652,6 @@ public class option extends AppCompatActivity {
         protected Bitmap doInBackground(Void... voids) {
             try {
                 // proses utama, nge bikin gambar dari URL yang udah kita dapet dari hasil potret
-                Log.d("DoInBackGround","size: "+imageView.getWidth()+", "+imageView.getHeight());
                 return bitmapLoader.load(getApplicationContext(), new int[]{imageView.getWidth(), imageView.getHeight()}, imageUrl);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -664,26 +672,24 @@ public class option extends AppCompatActivity {
             originalBitmap = hasilLoadDariUrl;
         }
     }
-
+    // syntax nampilin hasil dehaze
     private class DehazedImageLoaderThread extends AsyncTask<Bitmap, Void, ImageDehazeResult> {
-
-        public DehazedImageLoaderThread() {
+        float params_value;
+        public DehazedImageLoaderThread(float threshold) {
             imageUrl = UriToUrl.get(getApplicationContext(), imageUri);
             bitmapLoader = new BitmapLoader();
+            params_value = threshold;
         }
 
         @Override
         protected ImageDehazeResult doInBackground(Bitmap... bitmapAsliDariThreadSblmnya) {
             // Menerima bitmap original yang didapat dari proses OriginalBitmapLoader (thread sebelumnya)
             Bitmap bitmap = bitmapAsliDariThreadSblmnya[0];
-            if (bitmap!=null) {
-                int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
-                // kirim ke PostExecute di bawah
-                return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth()));
-            }
-            return null;
+            // kirim ke PostExecute di bawah
+            return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth(), params_value));
         }
 
         @Override
@@ -691,10 +697,10 @@ public class option extends AppCompatActivity {
             super.onPostExecute(imageDehazeResult);
 
             // set image hasil dehaze image sebelahnya
-            imageViewProcess1.setImageBitmap(imageDehazeResult.getResult());
+            imageViewDehaze.setImageBitmap(imageDehazeResult.getResult());
 
             // set image depth hasil dehaze ke sebelahnya lagi
-            imageViewProcess2.setImageBitmap(imageDehazeResult.getDepth());
+            imageViewDepthMap.setImageBitmap(imageDehazeResult.getDepth());
 
             // udahan progress bar nya, muter mulu.
             progressBar.setVisibility(View.GONE);
