@@ -8,7 +8,7 @@ Method: Dark Channel Prior, Bilateral Filtering(Rest API python)
 
 Enhancement: Histogram Equalization, Saturation, Contrast, Brightness
 
-Value : MSE, PSNR, Contrast Gain(Matlab/python), Saturated Pixel(Matlab/python)
+Value : MSE, PSNR, Contrast Gain, Saturated Pixel (Matlab/python)
 
 For Use Dehaze 2 : Download App PostMan 
 
