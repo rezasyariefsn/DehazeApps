@@ -131,8 +131,15 @@ public class option extends AppCompatActivity {
         imageUri = getIntent().getData();
 
         // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
-        OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
-        oriImageLoader.execute();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+                oriImageLoader.execute();
+            }
+        });
+//        OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
+//        oriImageLoader.execute();
 
         tmpl_gmbr.setOnClickListener(new View.OnClickListener() {
             @Override
