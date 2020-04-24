@@ -54,7 +54,7 @@ import com.example.aplikasita.dehaze.ImageDehazeResult;
 import com.example.aplikasita.lib.UriToUrl;
 import com.example.aplikasita.network.data.RetrofitService;
 import com.example.aplikasita.network.data.UploadResponseData;
-import com.example.aplikasita.storage.FilterStorage;
+//import com.example.aplikasita.storage.FilterStorage;
 import com.example.dehaze.GuidedFilter;
 import com.example.dehaze.HazeRemover;
 
@@ -67,7 +67,7 @@ public class option extends AppCompatActivity {
     // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
     private Bitmap originalBitmap;
     private BitmapDrawable originalBitmapDrawable;
-    private FilterStorage newFilter;
+//    private FilterStorage newFilter;
     private BitmapLoader bitmapLoader;
     private ProgressBar progressBar;
 
@@ -94,7 +94,7 @@ public class option extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
 
-        newFilter = new FilterStorage();
+//        newFilter = new FilterStorage();
 
         // main image (ditampilin)
 
@@ -177,29 +177,55 @@ public class option extends AppCompatActivity {
                 BitmapDrawable drawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
 
-                File filepath = Environment.getExternalStorageDirectory();
-                File Dir = new File(filepath.getAbsolutePath() + "/Demo/");
-                Dir.mkdir();
-                File file = new File(Dir, System.currentTimeMillis() + ".jpg");
-                try {
-                    outputStream = new FileOutputStream(file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                Toast.makeText(getApplicationContext(), "Image Save Into Gallery", Toast.LENGTH_SHORT).show();
-                try {
-                    outputStream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                FileOutputStream outputStream = null;
 
+                File sdCard = Environment.getExternalStorageDirectory();
+                File directory = new File(sdCard.getAbsolutePath() + "/Demo/");
+                directory.mkdir();
+                String fileName = String.format("%d.jpg",System.currentTimeMillis());
+                File outFile = new File(directory,fileName);
+
+                Toast.makeText(option.this, "Image Save Into gallery", Toast.LENGTH_SHORT).show();
+
+                try {
+                    outputStream = new FileOutputStream(outFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+
+                    Intent intent = new Intent((Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
+                    intent.setData(Uri.fromFile(outFile));
+                    sendBroadcast(intent);
+
+                }catch (FileNotFoundException e){
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+
+
+//                File file = new File(Dir, System.currentTimeMillis() + ".jpg");
+//                try {
+//                    outputStream = new FileOutputStream(file);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+//                Toast.makeText(getApplicationContext(), "Image Save Into Gallery", Toast.LENGTH_SHORT).show();
+//                try {
+//                    outputStream.flush();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    outputStream.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
         });
 
         // Button Save Filter ( Ke UI Save Filter )
@@ -427,8 +453,6 @@ public class option extends AppCompatActivity {
 //            }
 //        });
 
-        seekBarBright.setProgress(imageViewDehaze.getBrightness() + 255);
-
         seekBarBright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBarBright, final int i, boolean fromUser) {
@@ -440,7 +464,7 @@ public class option extends AppCompatActivity {
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         getMatrik(bitmap);
                         brightnessTxt.setText(String.valueOf(i - 250));
-                        newFilter.setBrightLevel(i);
+
                     }
                 });
 
@@ -458,8 +482,6 @@ public class option extends AppCompatActivity {
         });
 
         // FIXME ini juga
-        seekBarContrast.setProgress((int) imageViewDehaze.getContrast() * 100);
-
         seekBarContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBarContrast, int i, boolean fromUser) {
@@ -468,7 +490,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 contrastTxt.setText(String.valueOf(i - 250));
-                newFilter.setContrastLevel(i);
+
             }
 
             @Override
@@ -490,7 +512,7 @@ public class option extends AppCompatActivity {
                 Bitmap bitmap = bitmapDrawable.getBitmap();
                 getMatrik(bitmap);
                 saturationTxt.setText(String.valueOf(i - 250));
-                newFilter.setSatLevel(i);
+
             }
 
             @Override
