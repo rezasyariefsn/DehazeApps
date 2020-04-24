@@ -77,16 +77,17 @@ public class option extends AppCompatActivity {
     private String imageUrl;
     private EditText brightnessTxt, contrastTxt, saturationTxt, dehazeTxt;
 
-    private TextView MSEhsl, PSNRhsl;
+//    private TextView MSEhsl, PSNRhsl;
 
-    private Button savePhoto, saveFilter, dehazeButton, depthMap, histeqBtn;
-    private Button PSNRbtn, MSEbtn;
+    private Button savePhoto, dehazeButton, depthMap, histeqBtn;
+//    private Button PSNRbtn, MSEbtn;
     private Button dehaze2Button;
     private Button tmpl_gmbr;
     OutputStream outputStream;
 
     private final HazeRemover hazeRemover = new HazeRemover(new GuidedFilter(), 2000, 2000);
     private int progressSeekbarDehaze;
+    private static int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class option extends AppCompatActivity {
         imageView = findViewById(R.id.imageView2);
         imageViewDehaze = findViewById(R.id.imageView3);
         imageViewDepthMap = findViewById(R.id.imageView4);
-        seekbarDehaze = findViewById(R.id.seekbar_dehaze);
+//        seekbarDehaze = findViewById(R.id.seekbar_dehaze);
         seekBarBright = findViewById(R.id.seekbar_brightness);
         seekBarContrast = findViewById(R.id.seekbar_contrast);
         seekBarSaturation = findViewById(R.id.seekbar_saturation);
@@ -112,17 +113,17 @@ public class option extends AppCompatActivity {
         dehazeTxt = findViewById(R.id.valueTxt4);
 //        dehaze2Txt = findViewById(R.id.valueTxt5);
 
-        MSEhsl = findViewById(R.id.mseHsl);
-        PSNRhsl = findViewById(R.id.psnrHsl);
+//        MSEhsl = findViewById(R.id.mseHsl);
+//        PSNRhsl = findViewById(R.id.psnrHsl);
 
         savePhoto = findViewById(R.id.save_photo);
-        saveFilter = findViewById(R.id.save_filter);
+//        saveFilter = findViewById(R.id.save_filter);
         dehazeButton = findViewById(R.id.dehaze_button);
         dehaze2Button = findViewById(R.id.dehaze2_button);
         depthMap = findViewById(R.id.depthMap);
         histeqBtn = findViewById(R.id.histeqButton);
-        PSNRbtn = findViewById(R.id.psnrBtn);
-        MSEbtn = findViewById(R.id.mseBtn);
+//        PSNRbtn = findViewById(R.id.psnrBtn);
+//        MSEbtn = findViewById(R.id.mseBtn);
         tmpl_gmbr = findViewById(R.id.tmplGambar_button);
 //        histeq2Btn = findViewById(R.id.histeq2Button);
 
@@ -130,7 +131,6 @@ public class option extends AppCompatActivity {
         // Diwang nambahin imageUri yang didapet dari potretan sebelumnya
         imageUri = getIntent().getData();
 
-        // Fixme diwang komen dulu, biar bitmapnya diset dari method dibawah, supaya lebih proper caranya
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -140,7 +140,6 @@ public class option extends AppCompatActivity {
         });
 //        OriginalImageLoaderThread oriImageLoader = new OriginalImageLoaderThread();
 //        oriImageLoader.execute();
-
         tmpl_gmbr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,27 +148,27 @@ public class option extends AppCompatActivity {
             }
         });
 
-        PSNRbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String hasilpsnr = "";
-                double psnr = getMSE(originalBitmap, imageViewDehaze.getBitmap())[1];
-                hasilpsnr = String.format("%.2f", psnr);
-                PSNRhsl.setText(hasilpsnr);
+//        PSNRbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String hasilpsnr = "";
+//                double psnr = getMSE(originalBitmap, imageViewDehaze.getBitmap())[1];
+//                hasilpsnr = String.format("%.2f", psnr);
+//                PSNRhsl.setText(hasilpsnr);
+//
+//            }
+//        });
 
-            }
-        });
-
-        MSEbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String hasilmse = "";
-                double mse = getMSE(originalBitmap, imageViewDehaze.getBitmap())[0];
-                hasilmse = String.format("%.2f", mse);
-                MSEhsl.setText(hasilmse);
-
-            }
-        });
+//        MSEbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String hasilmse = "";
+//                double mse = getMSE(originalBitmap, imageViewDehaze.getBitmap())[0];
+//                hasilmse = String.format("%.2f", mse);
+//                MSEhsl.setText(hasilmse);
+//
+//            }
+//        });
 
         // Buat save Foto
         savePhoto.setOnClickListener(new View.OnClickListener() {
@@ -204,18 +203,18 @@ public class option extends AppCompatActivity {
         });
 
         // Button Save Filter ( Ke UI Save Filter )
-        saveFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), filter.class);
-                Bundle isiFilter = new Bundle();
-                intent.putExtra("dehazeLevel", newFilter.getDehazeLevel());
-                intent.putExtra("brightLevel", newFilter.getBrightLevel());
-                intent.putExtra("contrastLevel", newFilter.getContrastLevel());
-                intent.putExtra("saturationLevel", newFilter.getSatLevel());
-                startActivity(intent);
-            }
-        });
+//        saveFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), filter.class);
+//                Bundle isiFilter = new Bundle();
+//                intent.putExtra("dehazeLevel", newFilter.getDehazeLevel());
+//                intent.putExtra("brightLevel", newFilter.getBrightLevel());
+//                intent.putExtra("contrastLevel", newFilter.getContrastLevel());
+//                intent.putExtra("saturationLevel", newFilter.getSatLevel());
+//                startActivity(intent);
+//            }
+//        });
 
         // Button Result Dehaze 2
         dehaze2Button.setOnClickListener(new View.OnClickListener() {
@@ -367,8 +366,6 @@ public class option extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // input enter apa engga , backslash = enter
-                // FIXME Ini udah ga kepake
                 if (count>before){
                     if (s.subSequence(start, start + 1).toString().equalsIgnoreCase("\n")) {
 
@@ -394,43 +391,43 @@ public class option extends AppCompatActivity {
 
 
         // Menampilkan Brightness, Contrast, Saturation, dehaze dan edit value text
-        //FIXME Diwang nambahin seekbarDehaze
-        seekbarDehaze.setProgress(progressSeekbarDehaze);
 
-        seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // dimasukkan ke dalam Thread UI supaya bisa multithreading
-                        // ngambil bitmap dari picture yang ditampilin
+//        //FIXME Diwang nambahin seekbarDehaze
+//        seekbarDehaze.setProgress(progressSeekbarDehaze);
+//
+//        seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // dimasukkan ke dalam Thread UI supaya bisa multithreading
+//                        // ngambil bitmap dari picture yang ditampilin
+//
+//                        // nge dehaze, terus tampilin imageview dehazed yang baru
+//                        ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
+//                        imageViewDehaze.setImageBitmap(resultDehazed[2].getResult());
+//
+//                        progressSeekbarDehaze = progress;
+//
+//                        // simpen nilai dari progress
+//                        newFilter.setDehazeLevel(progress);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
 
-                        // nge dehaze, terus tampilin imageview dehazed yang baru
-                        ImageDehazeResult[] resultDehazed = removeHazeOnBitmap(originalBitmap, progress);
-                        imageViewDehaze.setImageBitmap(resultDehazed[2].getResult());
-
-                        progressSeekbarDehaze = progress;
-
-                        // simpen nilai dari progress
-                        newFilter.setDehazeLevel(progress);
-                    }
-                });
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        // FIXME Diwang nambahin satu line ini buat ngeset progressbar 'sesuai' sama level brightnessnya
-        seekBarBright.setProgress(imageView.getBrightness() + 255);
+        seekBarBright.setProgress(imageViewDehaze.getBrightness() + 255);
 
         seekBarBright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -439,7 +436,7 @@ public class option extends AppCompatActivity {
                     @Override
                     public void run() {
                         imageViewDehaze.setBrightness(i - 255).updateStyle();
-                        BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+                        BitmapDrawable bitmapDrawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         getMatrik(bitmap);
                         brightnessTxt.setText(String.valueOf(i - 250));
@@ -461,7 +458,7 @@ public class option extends AppCompatActivity {
         });
 
         // FIXME ini juga
-        seekBarContrast.setProgress((int) imageView.getContrast() * 100);
+        seekBarContrast.setProgress((int) imageViewDehaze.getContrast() * 100);
 
         seekBarContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -517,7 +514,8 @@ public class option extends AppCompatActivity {
     // Untuk Upload gambar ke server
     private void uploadFile(Bitmap bitmap) {
         // Nge buat filename dari bitmap
-        String filename = "image.jpg";
+        // count di buat untuk membedakan nama file, di tambahkan static biar nilai nya beda
+        String filename = "image"+(count++)+ ".jpg";
         File f = new File(this.getCacheDir(), filename);
         try {
             f.createNewFile();
@@ -557,7 +555,8 @@ public class option extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         String file_url = response.body().getFileUrl();
                         // taro di glide untuk ambil data nya
-                        Glide.with(option.this).asBitmap().load(file_url).into(imageView);
+                        Glide.with(option.this).asBitmap().load(file_url).into(imageViewDehaze);
+                        Log.e("glide", "hasilglide" + imageViewDehaze);
                     }
                 }
 
@@ -641,8 +640,6 @@ public class option extends AppCompatActivity {
         int[] pixels = new int[src.getWidth() * src.getHeight()];
         src.getPixels(pixels, 0, src.getWidth(), 0, 0, src.getWidth(), src.getHeight());
 
-        // convert integer dari seekbar ke float untuk parameter library si hazeremover
-        float threshold = getThreshold(value);
 
         // Nilai Variable untuk dehaze di seekbar gimana ??
         // nilai tidak cuman satu
@@ -652,29 +649,14 @@ public class option extends AppCompatActivity {
 
 
         // return bitmap hasil dehaze pake lib nya..
-        results[0] = new ImageDehazeResult(hazeRemover.dehazeProcess1(pixels, src.getHeight(), src.getWidth(), threshold));
-        results[1] = new ImageDehazeResult(hazeRemover.dehazeProcess2(pixels, src.getHeight(), src.getWidth(), threshold));
-        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
+        results[2] = new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth()));
 
 
 //        return new ImageDehazeResult(hazeRemover.dehaze(pixels, src.getHeight(), src.getWidth(), threshold));
         return results;
     }
 
-    private float getThreshold(int valueSeekbar) {
-        float thresHold;
-        // integer si seekbar itu 0 - 100, mesti di convert ke float yang grafiknya exponential (liat di paper)
-        // 0 -> berarti nilai result besar, gambar semakin berkabut
-        // 100 -> berarti nilai result kecil bgt, gambar semakin jelas
-        float percent = (float) (valueSeekbar / 100);
-        float decay = 1 - percent;
 
-        thresHold = (float) Math.pow(decay, 1000);
-
-//        thresHold = 0.2f;
-//
-        return thresHold;
-    }
 
     // FIXME Diwang nambahin asynctask buat ngeload image hasil potret ke imageView nya
     private class OriginalImageLoaderThread extends AsyncTask<Void, Void, Bitmap> {

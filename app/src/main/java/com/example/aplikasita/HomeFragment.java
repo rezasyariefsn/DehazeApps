@@ -29,18 +29,18 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        gotosavefilter = view.findViewById(R.id.goToSaveFilter);
+        return inflater.inflate(R.layout.fragment_home, container, false);
+//        gotosavefilter = view.findViewById(R.id.goToSaveFilter);
+//
+//        gotosavefilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), filter.class);
+//                startActivity(intent);
+//            }
+//        });
 
-        gotosavefilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), filter.class);
-                startActivity(intent);
-            }
-        });
-
-        return view;
+//        return view;
     }
 
 }

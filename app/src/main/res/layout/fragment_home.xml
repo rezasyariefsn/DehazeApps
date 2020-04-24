@@ -34,13 +34,13 @@
         android:paddingRight="60dp"
         android:paddingBottom="50dp" />
 
-    <Button
-        android:id="@+id/goToSaveFilter"
-        android:layout_width="130dp"
-        android:layout_height="59dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="50dp"
-        android:text="Go to Save Filter" />
+<!--    <Button-->
+<!--        android:id="@+id/goToSaveFilter"-->
+<!--        android:layout_width="130dp"-->
+<!--        android:layout_height="59dp"-->
+<!--        android:layout_marginLeft="25dp"-->
+<!--        android:layout_marginTop="50dp"-->
+<!--        android:text="Go to Save Filter" />-->
 
 
 </LinearLayout>

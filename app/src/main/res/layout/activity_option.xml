@@ -108,23 +108,23 @@
             android:text="Tampil Gambar"
             android:textSize="10sp" />
 
-        <SeekBar
-            android:id="@+id/seekbar_dehaze"
-            android:layout_width="110dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="135dp"
-            android:layout_marginTop="265dp"
-            android:max="100"
-            android:min="0"
-            android:progress="50"
+<!--        <SeekBar-->
+<!--            android:id="@+id/seekbar_dehaze"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="135dp"-->
+<!--            android:layout_marginTop="265dp"-->
+<!--            android:max="100"-->
+<!--            android:min="0"-->
+<!--            android:progress="50"-->
 
-            />
+<!--            />-->
 
         <EditText
             android:id="@+id/valueTxt4"
             android:layout_width="110dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="254dp"
+            android:layout_marginLeft="137dp"
             android:layout_marginTop="265dp"
             android:hint="Value"
             android:inputType="numberDecimal"
@@ -223,61 +223,61 @@
             android:text="Histeq"
             android:textSize="10sp" />
 
-        <Button
-            android:id="@+id/psnrBtn"
-            android:layout_width="110dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="477dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="PSNR"
-            android:textSize="10sp" />
+<!--        <Button-->
+<!--            android:id="@+id/psnrBtn"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginTop="477dp"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="PSNR"-->
+<!--            android:textSize="10sp" />-->
 
-        <Button
-            android:id="@+id/mseBtn"
-            android:layout_width="110dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="522dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="MSE"
-            android:textSize="10sp" />
+<!--        <Button-->
+<!--            android:id="@+id/mseBtn"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginTop="522dp"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="MSE"-->
+<!--            android:textSize="10sp" />-->
 
-        <TextView
-            android:id="@+id/psnrHsl"
-            android:layout_width="110dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="477dp"
-            android:text=""
-            android:textSize="21sp" />
+<!--        <TextView-->
+<!--            android:id="@+id/psnrHsl"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="150dp"-->
+<!--            android:layout_marginTop="477dp"-->
+<!--            android:text=""-->
+<!--            android:textSize="21sp" />-->
 
-        <TextView
-            android:id="@+id/mseHsl"
-            android:layout_width="110dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="522dp"
-            android:text=""
-            android:textSize="21sp" />
+<!--        <TextView-->
+<!--            android:id="@+id/mseHsl"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="150dp"-->
+<!--            android:layout_marginTop="522dp"-->
+<!--            android:text=""-->
+<!--            android:textSize="21sp" />-->
 
-        <Button
-            android:id="@+id/save_filter"
-            android:layout_width="130dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="609dp"
-            android:background="@drawable/savefilter"
-            android:text="Save Filter" />
+<!--        <Button-->
+<!--            android:id="@+id/save_filter"-->
+<!--            android:layout_width="130dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginLeft="50dp"-->
+<!--            android:layout_marginTop="609dp"-->
+<!--            android:background="@drawable/savefilter"-->
+<!--            android:text="Save Filter" />-->
 
         <Button
             android:id="@+id/save_photo"
             android:layout_width="130dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="210dp"
-            android:layout_marginTop="609dp"
+            android:layout_marginLeft="130dp"
+            android:layout_marginTop="539dp"
             android:background="@drawable/savephoto"
             android:text="Save Photo" />
 
