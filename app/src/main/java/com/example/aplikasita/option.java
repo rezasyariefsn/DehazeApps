@@ -175,7 +175,8 @@ public class option extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BitmapDrawable drawable = (BitmapDrawable) imageViewDehaze.getDrawable();
-                Bitmap bitmap = drawable.getBitmap();
+                Bitmap bitmap = drawable.getBitmap(); // coba yang ini ga kita pake.. langsung pake bitmap dari StyleImageView
+                bitmap = imageViewDehaze.getBitmap();
 
                 FileOutputStream outputStream = null;
 
