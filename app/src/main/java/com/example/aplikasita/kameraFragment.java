@@ -397,7 +397,7 @@ public class kameraFragment extends Fragment {
 //    }
 // end Histogram
     }
-
+// digunakan untuk penanda alamat 
     private Uri getOutputMediaFile() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "Tugas Akhir Reza");
@@ -424,6 +424,7 @@ public class kameraFragment extends Fragment {
         }
 
         @Override
+
         protected void onPostExecute(Bitmap hasilLoadDariUrl) {
             super.onPostExecute(hasilLoadDariUrl);
 

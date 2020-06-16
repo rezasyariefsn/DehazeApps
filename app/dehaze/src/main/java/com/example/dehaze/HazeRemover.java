@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import static com.example.dehaze.ColorUtils.*;
 
 public class HazeRemover {
-    public static final float TRANSMISSION_THRESHOLD = 0.2f;
+    public static final float TRANSMISSION_THRESHOLD = 0.1f;
     private static final int MAX_ATMOSPHERE = 220;
     private static final int DARK_CHANNEL_WINDOW_RADIUS = 7;
     private static final float OMEGA = 0.95f;
@@ -14,17 +14,17 @@ public class HazeRemover {
 
     private final float[][] fBuffer1;
     private final float[][] fBuffer2;
-    private final float[][] fBuffer3;
-    private final float[][] fBuffer4;
+//    private final float[][] fBuffer3;
+//    private final float[][] fBuffer4;
 
     public HazeRemover(GuidedFilter guidedFilter, int maxHeight, int maxWidth) {
         this.guidedFilter = guidedFilter;
         this.fBuffer1 = new float[maxHeight][maxWidth];
         this.fBuffer2 = new float[maxHeight][maxWidth];
-        this.fBuffer3 = new float[maxHeight][maxWidth];
-        this.fBuffer4 = new float[maxHeight][maxWidth];
+//        this.fBuffer3 = new float[maxHeight][maxWidth];
+//        this.fBuffer4 = new float[maxHeight][maxWidth];
     }
-
+// objek untuk menyimpan data pixel yang akan di kalkulasi oleh algoritma dark channel
     private static void calcDarkChannel(float[][] srcDest, float[][] buffer, int height, int width) {
         FloatMinQueue queue = new FloatMinQueue(Math.max(height, width));
         for (int y = 0; y < height; ++y) {
@@ -115,7 +115,6 @@ public class HazeRemover {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 int channel = toChannel(depth[y][x] * 0xFF);
-                // todo make red! coz red goaz fasta!!!
                 result[y * width + x] = 0xFFFF0000 | (channel << 8);
             }
         }

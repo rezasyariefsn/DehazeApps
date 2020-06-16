@@ -7,32 +7,36 @@
     android:layout_height="match_parent"
     tools:context=".settingFragment">
 
-    <androidx.appcompat.widget.SearchView
-        android:layout_width="321dp"
-        android:layout_height="35dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="60dp"
-        app:queryHint="Search Your Filter Here"
-        app:iconifiedByDefault="false"
-        android:background="@drawable/homesearch" />
+<!--    <androidx.appcompat.widget.SearchView-->
+<!--        android:layout_width="321dp"-->
+<!--        android:layout_height="35dp"-->
+<!--        android:layout_marginLeft="19dp"-->
+<!--        android:layout_marginTop="60dp"-->
+<!--        app:queryHint="Search Your Filter Here"-->
+<!--        app:iconifiedByDefault="false"-->
+<!--        android:background="@drawable/homesearch" />-->
 
     <TextView
         android:layout_width="320dp"
         android:layout_height="87dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="140dp"
+        android:text="Halo Selamat datang di FilterApps"
+        android:textSize="25sp"
         android:background="@drawable/homekotak1"
         android:padding="10dp" />
 
     <TextView
         android:layout_width="320dp"
         android:layout_height="219dp"
-        android:layout_marginLeft="19dp"
+        android:layout_marginLeft="45dp"
         android:background="@drawable/homekotak2"
         android:paddingLeft="60dp"
         android:paddingTop="10dp"
         android:paddingRight="60dp"
-        android:paddingBottom="50dp" />
+        android:paddingBottom="50dp"
+        android:text="Silahkan langsung menuju button capture untuk menginput gambar :)"
+        android:textSize="20sp"/>
 
 <!--    <Button-->
 <!--        android:id="@+id/goToSaveFilter"-->

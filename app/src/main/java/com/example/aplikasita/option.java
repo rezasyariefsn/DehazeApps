@@ -177,17 +177,13 @@ public class option extends AppCompatActivity {
                 BitmapDrawable drawable = (BitmapDrawable) imageViewDehaze.getDrawable();
                 Bitmap bitmap = drawable.getBitmap(); // coba yang ini ga kita pake.. langsung pake bitmap dari StyleImageView
                 bitmap = imageViewDehaze.getBitmap();
-
                 FileOutputStream outputStream = null;
-
                 File sdCard = Environment.getExternalStorageDirectory();
                 File directory = new File(sdCard.getAbsolutePath() + "/Demo/");
                 directory.mkdir();
                 String fileName = String.format("%d.jpg",System.currentTimeMillis());
                 File outFile = new File(directory,fileName);
-
                 Toast.makeText(option.this, "Image Save Into gallery", Toast.LENGTH_SHORT).show();
-
                 try {
                     outputStream = new FileOutputStream(outFile);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
@@ -592,7 +588,7 @@ public class option extends AppCompatActivity {
     }
 
 
-    // Get Value PSNR dan MSE
+    // Get Value PSNR dan MSE (ga jadi)
     public double[] getMSE(Bitmap source, Bitmap result) {
         double[] hasil = new double[2];
         Mat resultMat = new Mat();
@@ -654,6 +650,7 @@ public class option extends AppCompatActivity {
     }
 
     // FIXME Diwang nambahin method dehaze untuk ngubah bitmap jadi dehazed
+    // nyimpen data pixel panjang kali lebar nyaa, untuk ditampilkan
     private ImageDehazeResult[] removeHazeOnBitmap(Bitmap src, int value) {
 
         // Objek yang berisi 3 buah hasil tiap proses
@@ -714,6 +711,7 @@ public class option extends AppCompatActivity {
         }
     }
     // syntax nampilin hasil dehaze
+    // metode untuk menghasilkan hasil imagedehazeresult
     private class DehazedImageLoaderThread extends AsyncTask<Bitmap, Void, ImageDehazeResult> {
         float params_value;
         public DehazedImageLoaderThread(float threshold) {
@@ -730,6 +728,7 @@ public class option extends AppCompatActivity {
             bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
             // kirim ke PostExecute di bawah
+            // hazeremover.dehaze untuk menghasilkan metode dark channel prior
             return new ImageDehazeResult(hazeRemover.dehaze(pixels, bitmap.getHeight(), bitmap.getWidth(), params_value));
         }
 

@@ -56,14 +56,14 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/aftercapture2"
         />
-    <Button
-        android:layout_width="250dp"
-        android:text="Browse Filter"
-        android:textSize="17sp"
-        android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/aftercapture2"
-        android:padding="10dp" />
+<!--    <Button-->
+<!--        android:layout_width="250dp"-->
+<!--        android:text="Browse Filter"-->
+<!--        android:textSize="17sp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginHorizontal="50dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:background="@drawable/aftercapture2"-->
+<!--        android:padding="10dp" />-->
 </LinearLayout>

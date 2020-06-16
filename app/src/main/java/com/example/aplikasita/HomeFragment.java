@@ -17,7 +17,7 @@ import android.widget.Button;
  */
 public class HomeFragment extends Fragment {
 
-    private Button gotosavefilter;
+   // private Button gotosavefilter;
 
 
     public HomeFragment() {
