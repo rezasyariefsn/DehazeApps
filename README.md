@@ -10,7 +10,7 @@ Enhancement: Histogram Equalization, Saturation, Contrast, Brightness
 
 Value : MSE, PSNR, Contrast Gain, Saturated Pixel (Matlab/python)
 
-For Use Dehaze 2 : Download App PostMan 
+For Use Dehaze 2 
 
 run server.py in cmd/terminal
 
