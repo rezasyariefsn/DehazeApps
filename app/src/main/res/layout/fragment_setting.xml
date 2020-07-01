@@ -40,9 +40,9 @@
         android:paddingTop="10dp"
         android:paddingRight="60dp"
         android:paddingBottom="50dp"
-        android:text="Filter Apps Merupakan Aplikasi Dehaze gambar dan enhancement gambar"
+        android:text="Dehaze Apps Merupakan Aplikasi Dehaze gambar dan enhancement gambar"
         android:textAlignment="center"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
 
 

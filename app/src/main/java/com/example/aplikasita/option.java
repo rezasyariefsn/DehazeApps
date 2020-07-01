@@ -64,7 +64,7 @@ public class option extends AppCompatActivity {
     private StyleImageView imageViewDehaze;
     private StyleImageView imageViewDepthMap;
 
-    // FIXME Diwang nambahin bitmap khusus buat gambar aslinya
+    // FIXME nambahin bitmap khusus buat gambar aslinya
     private Bitmap originalBitmap;
     private BitmapDrawable originalBitmapDrawable;
 //    private FilterStorage newFilter;
@@ -415,7 +415,7 @@ public class option extends AppCompatActivity {
 
         // Menampilkan Brightness, Contrast, Saturation, dehaze dan edit value text
 
-//        //FIXME Diwang nambahin seekbarDehaze
+//
 //        seekbarDehaze.setProgress(progressSeekbarDehaze);
 //
 //        seekbarDehaze.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -525,6 +525,7 @@ public class option extends AppCompatActivity {
     }
 
     // FIXME ini method untuk validasi decimal input nya
+    // yang di dalem pattern compile untuk mastiin angka yang di masukin user valid/engga, biar ga masukin alfabet dll
     private boolean isInputDehazeValueValid(String valueInput) {
         Pattern decimalPattern = Pattern.compile("^\\d+(\\.\\d+)?$");
         return decimalPattern.matcher(valueInput).matches();
@@ -649,7 +650,7 @@ public class option extends AppCompatActivity {
         }
     }
 
-    // FIXME Diwang nambahin method dehaze untuk ngubah bitmap jadi dehazed
+    // FIXME nambahin method dehaze untuk ngubah bitmap jadi dehazed
     // nyimpen data pixel panjang kali lebar nyaa, untuk ditampilkan
     private ImageDehazeResult[] removeHazeOnBitmap(Bitmap src, int value) {
 
@@ -678,7 +679,7 @@ public class option extends AppCompatActivity {
 
 
 
-    // FIXME Diwang nambahin asynctask buat ngeload image hasil potret ke imageView nya
+    // FIXME nambahin asynctask buat ngeload image hasil potret ke imageView nya
     private class OriginalImageLoaderThread extends AsyncTask<Void, Void, Bitmap> {
 
         public OriginalImageLoaderThread() {

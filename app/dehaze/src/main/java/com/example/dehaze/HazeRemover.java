@@ -142,7 +142,7 @@ public class HazeRemover {
         );
     }
 
-    // FIXME Diwang nambahin custom dehaze method, supaya bisa diatur2 pakai seekbar. parameter: threshold
+    // FIXME nambahin custom dehaze method, supaya bisa diatur2 pakai seekbar. parameter: threshold
     public DehazeResult dehaze(int[] pixels, int height, int width, float threshold) {
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
@@ -153,7 +153,7 @@ public class HazeRemover {
         getTransmission(pixels, fBuffer1, fBuffer2, height, width, atmosphere);
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; ++x)
-                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold); // todo threshold transmission remove?
+                fBuffer1[y][x] = Math.max(fBuffer1[y][x], threshold);
         float[][] refinedTransmission = guidedFilter.filter(pixels, height, width, fBuffer1);
         calcRadiance(pixels, atmosphere, refinedTransmission, height, width);
         return new DehazeResult(

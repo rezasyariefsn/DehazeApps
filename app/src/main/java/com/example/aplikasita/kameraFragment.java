@@ -123,7 +123,7 @@ public class kameraFragment extends Fragment {
         Gofilter = view.findViewById(R.id.Gofilter);
 
 
-        //Buat Take Camera
+        //Buat Take Camera/Open Gallery
         btnTakepic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
