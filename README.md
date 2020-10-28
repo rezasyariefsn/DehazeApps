@@ -1,4 +1,4 @@
-# TugasAkhir
+# Final Task
 Final Project with the title : Implementation of Noise Removal and Image Enhancement on Foggy Image
 
 Final Project for getting a Bachelor of Computer Engineering
